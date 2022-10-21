@@ -1,0 +1,217 @@
+﻿@page "/"
+
+@inject ICategoryData categoryData
+@inject IStatusData statusData
+@inject IUserData userData
+@inject IExpressionData expressionData
+@inject NavigationManager navManager
+@inject ProtectedSessionStorage sessionStorage
+
+<h1>Local Language Expressions</h1>
+
+<div>
+    <button>Suggest</button>
+</div>
+
+<div>
+    <div>@expressions?.Count Expressions</div>
+    <div>
+        <button @onclick="(() => OrderByNew(true))">New</button>
+        <button @onclick="(() => OrderByNew(false))">Popular</button>
+    </div>
+    <div>
+        <input type="text" placeholder="Search" aria-label="Search box" @oninput="((text) => OnSearchInput((string)text.Value))" />
+    </div>
+</div>
+
+<div>
+    <div>
+        @if (expressions is not null)
+        {
+            <Virtualize Items="@expressions" Context="e" OverscanCount="10">
+                <div>
+                    <div>
+                        <div>@GetUpvoteTopText(e)</div>
+                        <span class="oi oi-caret-top"></span>
+                        <div>@GetUpvoteBottomText(e)</div>
+                    </div>
+                    <div>
+                        <div @onclick="() => OpenDetails(e)">
+                            @e.Expression
+                        </div>
+                        <div>
+                            <div @onclick="() => OpenDetails(e)">@e.Category?.CategoryName</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            @e.Status?.StatusName
+                        </div>
+                    </div>
+                </div>
+            </Virtualize>
+        }
+    </div>
+    <div>
+        @if (categories is not null)
+        {
+            <div>
+                <span>Category</span>
+                <div @onclick="() => OnCategoryClick()">All</div>
+                @foreach (var c in categories)
+                {
+                    <div @onclick="() => OnCategoryClick(c.CategoryName)">@c.CategoryName</div>
+                }
+            </div>
+        }
+        @if (statuses is not null)
+        {
+            <div>
+                <span>Status</span>
+                <div @onclick="() => OnStatusClick()">All</div>
+                @foreach (var s in statuses)
+                {
+                    <div @onclick="() => OnStatusClick(s.StatusName)">@s.StatusName</div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private IList<CategoryModel> categories;
+    private IList<StatusModel> statuses;
+    private IList<ExpressionModel> expressions;
+
+    private string selectedCategory = "All";
+    private string selectedStatus = "All";
+    private string searchText = "";
+    private bool isSortedByNew = true;
+
+    protected async override Task OnInitializedAsync()
+    {
+        categories = await categoryData.GetCategoriesAsync();
+        statuses = await statusData.GetStatusesAsync();
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadFilterState();
+            await FilterExpressions();
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadFilterState()
+    {
+        var stringResults = await sessionStorage.GetAsync<string>(nameof(selectedCategory));
+        selectedCategory = stringResults.Success ? stringResults.Value : "All";
+
+        stringResults = await sessionStorage.GetAsync<string>(nameof(selectedStatus));
+        selectedStatus = stringResults.Success ? stringResults.Value : "All";
+
+        stringResults = await sessionStorage.GetAsync<string>(nameof(searchText));
+        searchText = stringResults.Success ? stringResults.Value : "";
+
+        var boolResults = await sessionStorage.GetAsync<bool>(nameof(isSortedByNew));
+        isSortedByNew = boolResults.Success ? boolResults.Value : true;
+    }
+
+    private async Task SaveFilterState()
+    {
+        await sessionStorage.SetAsync(nameof(selectedCategory), selectedCategory);
+        await sessionStorage.SetAsync(nameof(selectedStatus), selectedStatus);
+        await sessionStorage.SetAsync(nameof(searchText), searchText);
+        await sessionStorage.SetAsync(nameof(isSortedByNew), isSortedByNew);
+    }
+
+    private async Task FilterExpressions()
+    {
+        var result = await expressionData.GetApprovedExpressionsAsync();
+
+        if (selectedCategory != "All")
+        {
+            result = result.Where(e => e.Category?.CategoryName == selectedCategory).ToList();
+        }
+
+        if (selectedStatus != "All")
+        {
+            result = result.Where(e => e.Status?.StatusName == selectedStatus).ToList();
+        }
+
+        if (!string.IsNullOrWhiteSpace(searchText))
+        {
+            result = result.Where(e => e.Expression.Contains(searchText, StringComparison.InvariantCultureIgnoreCase) ||
+                                       e.Description.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
+                           .ToList();
+        }
+
+        if (isSortedByNew)
+        {
+            result = result.OrderByDescending(e => e.DateCreated).ToList();
+        }
+        else
+        {
+            result = result.OrderByDescending(e => e.UserVotes.Count).ThenByDescending(e => e.DateCreated).ToList();
+        }
+
+        expressions = result;
+
+        await SaveFilterState();
+    }
+
+    private async Task OrderByNew(bool isNew)
+    {
+        isSortedByNew = isNew;
+        await FilterExpressions();
+    }
+
+    private async Task OnSearchInput(string searchInput)
+    {
+        searchText = searchInput;
+        await FilterExpressions();
+    }
+
+    private async Task OnCategoryClick(string category = "All")
+    {
+        selectedCategory = category;
+        await FilterExpressions();
+    }
+
+    private async Task OnStatusClick(string status = "All")
+    {
+        selectedStatus = status;
+        await FilterExpressions();
+    }
+
+    private string GetUpvoteTopText(ExpressionModel expression)
+    {
+        if (expression.UserVotes?.Count > 0)
+        {
+            return expression.UserVotes.Count.ToString("00");
+        }
+        else
+        {
+            return "Click To";
+        }
+    }
+
+    private string GetUpvoteBottomText(ExpressionModel expression)
+    {
+        if (expression.UserVotes?.Count > 1)
+        {
+            return "Upvotes";
+        }
+        else
+        {
+            return "Upvote";
+        }
+    }
+
+    private void OpenDetails(ExpressionModel expression)
+    {
+        navManager.NavigateTo($"/Details/{expression.Id}");
+    }
+}

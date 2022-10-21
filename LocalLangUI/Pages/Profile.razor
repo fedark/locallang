@@ -1,0 +1,147 @@
+﻿@page "/Profile"
+
+@inject IExpressionData expressionData
+@inject IUserData userData
+@inject NavigationManager navManager
+
+<h1>My Profile</h1>
+
+<div>
+    <div>
+        <button @onclick="ClosePage"></button>
+    </div>
+</div>
+
+<div>
+    <h2>My Account</h2>
+    <p>
+        <a href="#">Edit My Profile</a>
+    </p>
+</div>
+
+@if (approved?.Count > 0)
+{
+    <div>
+        <h2>Approved Expression</h2>
+        <p>These are your expressions that are currently active.</p>
+
+        @foreach (var e in approved)
+        {
+            <hr />
+            <div>@e.Expression</div>
+            <p>@e.DateCreated.ToString("yyyy-MM-dd")</p>
+            <p>Total Votes: @e.UserVotes.Count</p>
+            <p>@e.Category.CategoryName</p>
+            <p>@e.Description</p>
+
+            @if (e.Status is not null)
+            {
+                <div>@e.Status.StatusName</div>
+                <p>@((MarkupString)e.OwnerNotes)</p>
+            }
+        }
+    </div>
+}
+
+@if (archived?.Count > 0)
+{
+    <div>
+        <h2>Archived Expression</h2>
+        <p>These are your expressions that are archived.</p>
+
+        @foreach (var e in archived)
+        {
+            <hr />
+            <div>@e.Expression</div>
+            <p>@e.DateCreated.ToString("yyyy-MM-dd")</p>
+            <p>Total Votes: @e.UserVotes.Count</p>
+            <p>@e.Category.CategoryName</p>
+            <p>@e.Description</p>
+
+            @if (e.Status is not null)
+            {
+                <div>@e.Status.StatusName</div>
+                <p>@((MarkupString)e.OwnerNotes)</p>
+            }
+        }
+    </div>
+}
+
+@if (pending?.Count > 0)
+{
+    <div>
+        <h2>Pending Expression</h2>
+        <p>These are your expressions that are currently pending.</p>
+
+        @foreach (var e in pending)
+        {
+            <hr />
+            <div>@e.Expression</div>
+            <p>@e.DateCreated.ToString("yyyy-MM-dd")</p>
+            <p>Total Votes: @e.UserVotes.Count</p>
+            <p>@e.Category.CategoryName</p>
+            <p>@e.Description</p>
+
+            @if (e.Status is not null)
+            {
+                <div>@e.Status.StatusName</div>
+                <p>@((MarkupString)e.OwnerNotes)</p>
+            }
+        }
+    </div>
+}
+
+@if (rejected?.Count > 0)
+{
+    <div>
+        <h2>Rejected Expression</h2>
+        <p>These are your expressions that are currently pending.</p>
+
+        @foreach (var e in rejected)
+        {
+            <hr />
+            <div>@e.Expression</div>
+            <p>@e.DateCreated.ToString("yyyy-MM-dd")</p>
+            <p>Total Votes: @e.UserVotes.Count</p>
+            <p>@e.Category.CategoryName</p>
+            <p>@e.Description</p>
+
+            @if (e.Status is not null)
+            {
+                <div>@e.Status.StatusName</div>
+                <p>@((MarkupString)e.OwnerNotes)</p>
+            }
+        }
+    </div>
+}
+
+@code {
+    private UserModel loggedInUser;
+
+    private IList<ExpressionModel> submissions;
+    private IList<ExpressionModel> approved;
+    private IList<ExpressionModel> archived;
+    private IList<ExpressionModel> pending;
+    private IList<ExpressionModel> rejected;
+
+    protected async override Task OnInitializedAsync()
+    {
+        loggedInUser = await userData.GetUserFromAuthentificationAsync("fk123");
+
+        submissions = await expressionData.GetUserExpressionsAsync(loggedInUser.Id);
+
+        if (loggedInUser is not null && submissions is not null)
+        {
+            submissions = submissions.OrderBy(e => e.DateCreated).ToList();
+            approved = submissions.Where(e => e.ApprovedForRelease && !e.Archived && !e.Rejected).ToList();
+            archived = submissions.Where(e => e.Archived && !e.Rejected).ToList();
+            pending = submissions.Where(e => !e.ApprovedForRelease && !e.Rejected).ToList();
+            rejected = submissions.Where(e => e.Rejected).ToList();
+        }
+    }
+
+    private void ClosePage()
+    {
+        navManager.NavigateTo("/");
+    }
+}

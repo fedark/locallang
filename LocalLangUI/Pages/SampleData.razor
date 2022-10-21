@@ -1,0 +1,146 @@
+﻿@page "/SampleData"
+
+@inject ICategoryData categoryData
+@inject IStatusData statusData
+@inject IUserData userData
+@inject IExpressionData expressionData
+
+<h3>SampleData</h3>
+
+@if (categoriesCreated)
+{
+    <h4>Categories have been created</h4>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="CreateCategoriesAsync">Create Categories</button>
+}
+
+@if (statusesCreated)
+{
+    <h4>Statues have been created</h4>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="CreateStatusesAsync">Create Statuses</button>
+}
+
+<button class="btn btn-danger" @onclick="GenerateSampleDataAsync">Generate Sample Data</button>
+
+@code {
+    private bool categoriesCreated = false;
+    private bool statusesCreated = false;
+
+    private async Task GenerateSampleDataAsync()
+    {
+        var user = new UserModel
+        {
+            FirstName = "Fedar",
+            LastName = "Kuzmich",
+            DisplayName = "FK",
+            EmailAddress = "fedark@ya.ru",
+            ObjectIdentifier = "fk123"
+        };
+        await userData.CreateUser(user);
+
+        var foundUser = await userData.GetUserFromAuthentificationAsync(user.ObjectIdentifier);
+        var categories = await categoryData.GetCategoriesAsync();
+        var statuses = await statusData.GetStatusesAsync();
+
+        var votes = new HashSet<string>();
+        votes.Add("user1");
+        votes.Add("user2");
+        votes.Add("user3");
+
+        var expression = new ExpressionModel
+        {
+            Author = new BasisUserModel(foundUser),
+            Expression = "First Test Expression",
+            Description = "Sample expression.",
+            Category = categories[0]
+        };
+        await expressionData.CreateExpressionAsync(expression);
+
+        expression = new()
+        {
+            Author = new BasisUserModel(foundUser),
+            Expression = "Second Test Expression",
+            Description = "Sample expression.",
+            Category = categories[1],
+            Status = statuses[0],
+            OwnerNotes = "Sample note for status."
+        };
+        await expressionData.CreateExpressionAsync(expression);
+
+        expression = new()
+        {
+            Author = new BasisUserModel(foundUser),
+            Expression = "Third Test Expression",
+            Description = "Sample expression.",
+            Category = categories[2],
+            Status = statuses[1],
+            OwnerNotes = "Sample note for status."
+        };
+        await expressionData.CreateExpressionAsync(expression);
+
+        expression = new()
+        {
+            Author = new BasisUserModel(foundUser),
+            Expression = "Fourth Test Expression",
+            Description = "Sample expression.",
+            Category = categories[3],
+            Status = statuses[2],
+            OwnerNotes = "Sample note for status.",
+            UserVotes = votes
+        };
+        await expressionData.CreateExpressionAsync(expression);
+
+        votes.Add("user4");
+    }
+
+    private async Task CreateCategoriesAsync()
+    {
+        var categories = await categoryData.GetCategoriesAsync();
+        if (categories?.Count > 0)
+            return;
+
+        var categorySample = new List<(string, string)>
+        {
+            ("Word", "A single word that is completely different from base language."),
+            ("Form", "A form of a word that is similar to base language."),
+            ("Phrase", "A combination of two or more words."),
+            ("Proverb", "An expression with accomplished meaning.")
+        };
+
+        foreach (var (name, description) in categorySample)
+        {
+            var category = new CategoryModel { CategoryName = name, CategoryDescription = description };
+            await categoryData.CreateCategory(category);
+        }
+
+        categoriesCreated = true;
+    }
+
+    private async Task CreateStatusesAsync()
+    {
+        var statuses = await statusData.GetStatusesAsync();
+        if (statuses?.Count > 0)
+            return;
+
+        var statusSample = new List<(string, string)>
+        {
+            ("Completed", "Accepted."),
+            ("Upcoming", "Accepted and will be released soon."),
+            ("Watching", "In progress."),
+            ("Dismissed", "Cancelled.")
+        };
+
+        foreach (var (name, description) in statusSample)
+        {
+            var status = new StatusModel { StatusName = name, StatusDescription = description };
+            await statusData.CreateStatus(status);
+        }
+
+        statusesCreated = true;
+    }
+}

@@ -1,0 +1,136 @@
+﻿@page "/AdminApproval"
+
+@inject IExpressionData expressionData
+@inject IUserData userData
+@inject NavigationManager navManager
+
+<h1>Pending Submissions</h1>
+
+<div>
+    <div>@submissions?.Count Submissions</div>
+    <div>
+        <button @onclick="ClosePage"></button>
+    </div>
+</div>
+
+@if (submissions is not null)
+{
+    @foreach (var e in submissions)
+    {
+        <div>
+            <div>
+                <button @onclick="(() => ApproveSubmission(e))">Approve</button>
+                <button @onclick="(() => RejectSubmission(e))">Reject</button>
+            </div>
+            <div>
+                <div>
+                    @if (editTitleId == e.Id)
+                    {
+                        <EditForm Model="@editedTitle" OnSubmit="(() => SaveTitle(e))">
+                            <InputText @bind-Value="editedTitle" />
+                            <button type="submit">
+                                <span class="oi oi-check"></span>
+                            </button>
+                            <button @onclick="() => editTitleId = string.Empty">
+                                <span class="oi oi-x"></span>
+                            </button>
+                        </EditForm>
+                    }
+                    else
+                    {
+                        @e.Expression
+                        <span class="oi oi-pencil" @onclick="() => EditTitle(e)"></span>
+                    }
+                </div>
+            </div>
+            <div>@e.Category.CategoryName</div>
+            <div>@e.Author.DispalyName</div>
+            <div>
+                <div>
+                    @if (editDescriptionId == e.Id)
+                    {
+                        <EditForm Model="@editedDescription" OnSubmit="(() => SaveDescription(e))">
+                            <InputText @bind-Value="editedDescription" />
+                            <button type="submit">
+                                <span class="oi oi-check"></span>
+                            </button>
+                            <button @onclick="() => editDescriptionId = string.Empty">
+                                <span class="oi oi-x"></span>
+                            </button>
+                        </EditForm>
+                    }
+                    else
+                    {
+                        @e.Description
+                        <span class="oi oi-pencil" @onclick="() => EditDescription(e)"></span>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    private IList<ExpressionModel> submissions;
+    private ExpressionModel editingModel;
+    private string editTitleId = string.Empty;
+    private string editedTitle = string.Empty;
+    private string editDescriptionId = string.Empty;
+    private string editedDescription = string.Empty;
+
+    protected async override Task OnInitializedAsync()
+    {
+        submissions = await expressionData.GetWaitingExpressionsAsync();
+    }
+
+    private async Task ApproveSubmission(ExpressionModel submission)
+    {
+        submission.ApprovedForRelease = true;
+        submissions.Remove(submission);
+        await expressionData.UpdateExpressionAsync(submission);
+    }
+
+    private async Task RejectSubmission(ExpressionModel submission)
+    {
+        submission.Rejected = true;
+        submissions.Remove(submission);
+        await expressionData.UpdateExpressionAsync(submission);
+    }
+
+    private void EditTitle(ExpressionModel model)
+    {
+        editingModel = model;
+        editedTitle = model.Expression;
+
+        editTitleId = model.Id;
+        editDescriptionId = string.Empty;
+    }
+
+    private async Task SaveTitle(ExpressionModel model)
+    {
+        editTitleId = string.Empty;
+        model.Expression = editedTitle;
+        await expressionData.UpdateExpressionAsync(model);
+    }
+
+    private void EditDescription(ExpressionModel model)
+    {
+        editingModel = model;
+        editedDescription = model.Description;
+
+        editTitleId = string.Empty;
+        editDescriptionId = model.Id;
+    }
+
+    private async Task SaveDescription(ExpressionModel model)
+    {
+        editDescriptionId = string.Empty;
+        model.Description = editedDescription;
+        await expressionData.UpdateExpressionAsync(model);
+    }
+
+    private void ClosePage()
+    {
+        navManager.NavigateTo("/");
+    }
+}

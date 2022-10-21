@@ -1,0 +1,91 @@
+﻿@page "/Create"
+
+@inject ICategoryData categoryData
+@inject IExpressionData expressionData
+@inject IUserData userData
+@inject NavigationManager navManager
+
+<h1>Make A Suggestion</h1>
+
+<div>
+    <div>
+        <div>
+            <button @onclick="ClosePage"></button>
+        </div>
+        @if (categories is not null)
+        {
+
+        }
+        <EditForm Model="createExpression" OnValidSubmit="CreateExpression">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div>
+                <label for="expression-text">Expression</label>
+                <div>Focus on the experssion you want to add.</div>
+                <InputText id="expression-text" @bind-Value="createExpression.Expression" />
+            </div>
+            <div>
+                <label for="category">Category</label>
+                <div>Choose category.</div>
+                <div>
+                    <CustomInputRadioGroup id="category" @bind-Value="createExpression.CategoryId">
+                        @foreach (var c in categories)
+                        {
+                            <div>
+                                <InputRadio Value="@c.Id" id="@c.Id" />
+                                <label for="@c.Id">@c.CategoryName - @c.CategoryDescription</label>
+                            </div>
+                        }
+                    </CustomInputRadioGroup>
+                </div>
+            </div>
+            <div>
+                <label for="description">Description</label>
+                <div>Briefly describe your expression.</div>
+                <InputTextArea id="description" @bind-Value="createExpression.Description" />
+            </div>
+            <div>
+                <button type="submit">Suggest</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private CreateExpressionModel createExpression = new();
+    private IList<CategoryModel> categories;
+    private UserModel loggedInUser;
+
+    protected async override Task OnInitializedAsync()
+    {
+        categories = await categoryData.GetCategoriesAsync();
+
+        //TODO: replace with user lookup
+        loggedInUser = await userData.GetUserFromAuthentificationAsync("fk123");
+    }
+
+    private void ClosePage()
+    {
+        navManager.NavigateTo("/");
+    }
+
+    private async Task CreateExpression()
+    {
+        var expression = new ExpressionModel
+        {
+            Author = new BasisUserModel(loggedInUser),
+            Category = categories.Where(c => c.Id == createExpression.CategoryId).FirstOrDefault(),
+            Description = createExpression.Description,
+            Expression = createExpression.Expression
+        };
+
+        if (expression.Category is null)
+        {
+            createExpression.CategoryId = "";
+        }
+
+        await expressionData.CreateExpressionAsync(expression);
+        createExpression = new();
+        ClosePage();
+    }
+}

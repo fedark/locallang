@@ -7,44 +7,45 @@
 @inject NavigationManager navManager
 @inject ProtectedSessionStorage sessionStorage
 
-<h1>Local Language Expressions</h1>
+<h1 class="page-heading text-uppercase mb-4">Local Language Expressions</h1>
 
-<div>
-    <button>Suggest</button>
+<div class="expression-container">
+    <button @onclick="LoadCreatePage" class="suggest-btn btn btn-outline-dark btn-lg text-uppercase">Suggest</button>
 </div>
 
-<div>
-    <div>@expressions?.Count Expressions</div>
-    <div>
-        <button @onclick="(() => OrderByNew(true))">New</button>
-        <button @onclick="(() => OrderByNew(false))">Popular</button>
+<div class="row">
+    <div class="expressions-count col-md-4 text-dark mt-2">@expressions?.Count Expressions</div>
+    <div class="col-md-4 col-xl-5 btn-group">
+        <button class="btn btn-order @SortedByNewClass(true)" @onclick="(() => OrderByNew(true))">New</button>
+        <button class="btn btn-order @SortedByNewClass(false)" @onclick="(() => OrderByNew(false))">Popular</button>
     </div>
-    <div>
-        <input type="text" placeholder="Search" aria-label="Search box" @oninput="((text) => OnSearchInput((string)text.Value))" />
+    <div class="col-md-4 col-xl-3 search-box">
+        <input type="text" placeholder="Search" aria-label="Search box" class="form-control rounded-control" 
+               @oninput="((text) => OnSearchInput((string)text.Value))" />
     </div>
 </div>
 
-<div>
-    <div>
+<div class="row">
+    <div class="col-md-8 col-xl-9">
         @if (expressions is not null)
         {
             <Virtualize Items="@expressions" Context="e" OverscanCount="10">
-                <div>
-                    <div>
-                        <div>@GetUpvoteTopText(e)</div>
-                        <span class="oi oi-caret-top"></span>
-                        <div>@GetUpvoteBottomText(e)</div>
+                <div class="expression-entry">
+                    <div class="@GetVoteClass(e)">
+                        <div class="text-uppercase">@GetUpvoteTopText(e)</div>
+                        <span class="oi oi-caret-top" style="font-size: 3rem"></span>
+                        <div class="text-uppercase">@GetUpvoteBottomText(e)</div>
                     </div>
-                    <div>
-                        <div @onclick="() => OpenDetails(e)">
+                    <div class="expression-entry-text">
+                        <div class="expression-entry-text-title" @onclick="() => OpenDetails(e)">
                             @e.Expression
                         </div>
                         <div>
-                            <div @onclick="() => OpenDetails(e)">@e.Category?.CategoryName</div>
+                            <div class="expression-entry-text-category" @onclick="() => OpenDetails(e)">@e.Category?.CategoryName</div>
                         </div>
                     </div>
-                    <div>
-                        <div>
+                    <div class="expression-entry-status @GetExpressionStatusClass(e)">
+                        <div class="expression-entry-status-text">
                             @e.Status?.StatusName
                         </div>
                     </div>
@@ -52,26 +53,26 @@
             </Virtualize>
         }
     </div>
-    <div>
+    <div class="col-md-4 col-xl-3">
         @if (categories is not null)
         {
-            <div>
-                <span>Category</span>
-                <div @onclick="() => OnCategoryClick()">All</div>
+            <div class="categories">
+                <span class="text-uppercase" fw-bold>Category</span>
+                <div class="@GetSelectedCategory()" @onclick="() => OnCategoryClick()">All</div>
                 @foreach (var c in categories)
                 {
-                    <div @onclick="() => OnCategoryClick(c.CategoryName)">@c.CategoryName</div>
+                    <div class="@GetSelectedCategory(c.CategoryName)" @onclick="() => OnCategoryClick(c.CategoryName)">@c.CategoryName</div>
                 }
             </div>
         }
         @if (statuses is not null)
         {
-            <div>
-                <span>Status</span>
-                <div @onclick="() => OnStatusClick()">All</div>
+            <div class="statuses">
+                <span class="text-uppercase fw-bold">Status</span>
+                <div class="@GetSelectedStatus()" @onclick="() => OnStatusClick()">All</div>
                 @foreach (var s in statuses)
                 {
-                    <div @onclick="() => OnStatusClick(s.StatusName)">@s.StatusName</div>
+                    <div class="@GetSelectedStatus(s.StatusName)" @onclick="() => OnStatusClick(s.StatusName)">@s.StatusName</div>
                 }
             </div>
         }
@@ -101,6 +102,71 @@
             await LoadFilterState();
             await FilterExpressions();
             StateHasChanged();
+        }
+    }
+
+    private void LoadCreatePage()
+    {
+        navManager.NavigateTo("/Create");
+    }
+
+    private string SortedByNewClass(bool isNew)
+    {
+        return isNew == isSortedByNew ? "sort-selected" : "";
+    }
+
+    private string GetVoteClass(ExpressionModel expression)
+    {
+        if (expression.UserVotes is null || expression.UserVotes.Count == 0)
+        {
+            return "expression-entry-no-votes";
+        }
+        else
+        {
+            return "expression-entry-voted";
+        }
+    }
+
+    private string GetExpressionStatusClass(ExpressionModel expression)
+    {
+        if (expression is null || expression.Status is null)
+        {
+            return "expression-entry-status-none";
+        }
+
+        var result = expression.Status.StatusName switch
+        {
+            "Completed" => "expression-entry-status-completed",
+            "Watching" => "expression-entry-status-watching",
+            "Upcoming" => "expression-entry-status-upcoming",
+            "Dismissed" => "expression-entry-status-dismissed",
+            _ => "expression-entry-status-none",
+        };
+
+        return result;
+    }
+
+    private string GetSelectedCategory(string category = "All")
+    {
+        if (category == selectedCategory)
+        {
+            return "selected-category";
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+    private string GetSelectedStatus(string status = "All")
+    {
+        if (status == selectedStatus)
+        {
+            return "selected-status";
+        }
+        else
+        {
+            return "";
         }
     }
 

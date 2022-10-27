@@ -23,10 +23,8 @@ namespace LocalLangUI
             services.AddMemoryCache();
 
             services.AddSingleton<IDbConnection, DbConnection>();
-            services.AddSingleton<ICategoryData, MongoCategoryData>();
-            services.AddSingleton<IStatusData, MongoStatusData>();
-            services.AddSingleton<IUserData, MongoUserData>();
-            services.AddSingleton<IExpressionData, MongoExpressionData>();
+            services.AddSingleton<ICategoryCollection, MongoCategoryCollection>();
+            services.AddSingleton<IExpressionCollection, MongoExpressionCollection>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

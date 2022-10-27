@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace LocalLangLibrary.DataAccess
 {
-	public interface IStatusData
+	public interface IExpressionCollection : IDbCollection<Expression>
 	{
-		Task CreateStatus(StatusModel status);
-		Task<IList<StatusModel>> GetStatusesAsync();
+		Task<IList<Expression>> GetPendingAsync();
+		Task LikeAsync(string id);
 	}
 }

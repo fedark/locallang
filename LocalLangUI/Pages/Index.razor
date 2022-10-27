@@ -1,98 +1,76 @@
 ﻿@page "/"
 
-@inject ICategoryData categoryData
-@inject IStatusData statusData
-@inject IUserData userData
-@inject IExpressionData expressionData
+@inject ICategoryCollection dbCategory
+@inject IExpressionCollection dbExpression
 @inject NavigationManager navManager
 @inject ProtectedSessionStorage sessionStorage
 
 <h1 class="page-heading text-uppercase mb-4">Local Language Expressions</h1>
 
 <div class="expression-container">
-    <button @onclick="LoadCreatePage" class="suggest-btn btn btn-outline-dark btn-lg text-uppercase">Suggest</button>
+    <button @onclick="OpenCreate" class="suggest-btn btn btn-outline-dark btn-lg text-uppercase">Suggest</button>
 </div>
 
 <div class="row">
-    <div class="expressions-count col-md-4 text-dark mt-2">@expressions?.Count Expressions</div>
+    <div class="expression-count col-md-4 text-dark mt-2">@expressions_.Count Expressions</div>
     <div class="col-md-4 col-xl-5 btn-group">
-        <button class="btn btn-order @SortedByNewClass(true)" @onclick="(() => OrderByNew(true))">New</button>
-        <button class="btn btn-order @SortedByNewClass(false)" @onclick="(() => OrderByNew(false))">Popular</button>
+        <button class="btn btn-order @GetSortClass(SortType.Alphabet)" @onclick="() => OnSort(SortType.Alphabet)">Abc</button>
+        <button class="btn btn-order @GetSortClass(SortType.New)" @onclick="() => OnSort(SortType.New)">New</button>
+        <button class="btn btn-order @GetSortClass(SortType.Popular)" @onclick="() => OnSort(SortType.Popular)">Popular</button>
     </div>
     <div class="col-md-4 col-xl-3 search-box">
         <input type="text" placeholder="Search" aria-label="Search box" class="form-control rounded-control" 
-               @oninput="((text) => OnSearchInput((string)text.Value))" />
+               @oninput="(text) => OnSearchInput((string)text.Value)" />
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-8 col-xl-9">
-        @if (expressions is not null)
-        {
-            <Virtualize Items="@expressions" Context="e" OverscanCount="10">
-                <div class="expression-entry">
-                    <div class="@GetVoteClass(e)">
-                        <div class="text-uppercase">@GetUpvoteTopText(e)</div>
-                        <span class="oi oi-caret-top" style="font-size: 3rem"></span>
-                        <div class="text-uppercase">@GetUpvoteBottomText(e)</div>
+        <Virtualize Items="@expressions_" Context="e" OverscanCount="10">
+            <div class="expression-entry">
+                <div class="@GetLikeClass(e)">
+                    <div class="text-uppercase">@GetLikeTopText(e)</div>
+                    <span class="oi oi-caret-top" style="font-size: 3rem"></span>
+                    <div class="text-uppercase">@GetLikeBottomText(e)</div>
+                </div>
+                <div class="expression-entry-text">
+                    <div class="expression-entry-text-title" @onclick="() => OpenDetails(e)">
+                        @e.Word
                     </div>
-                    <div class="expression-entry-text">
-                        <div class="expression-entry-text-title" @onclick="() => OpenDetails(e)">
-                            @e.Expression
-                        </div>
-                        <div>
-                            <div class="expression-entry-text-category" @onclick="() => OpenDetails(e)">@e.Category?.CategoryName</div>
-                        </div>
-                    </div>
-                    <div class="expression-entry-status @GetExpressionStatusClass(e)">
-                        <div class="expression-entry-status-text">
-                            @e.Status?.StatusName
-                        </div>
+                    <div>
+                        <div class="expression-entry-text-category" @onclick="() => OpenDetails(e)">@e.Category.Name</div>
                     </div>
                 </div>
-            </Virtualize>
-        }
+            </div>
+        </Virtualize>
     </div>
     <div class="col-md-4 col-xl-3">
-        @if (categories is not null)
-        {
-            <div class="categories">
-                <span class="text-uppercase" fw-bold>Category</span>
-                <div class="@GetSelectedCategory()" @onclick="() => OnCategoryClick()">All</div>
-                @foreach (var c in categories)
-                {
-                    <div class="@GetSelectedCategory(c.CategoryName)" @onclick="() => OnCategoryClick(c.CategoryName)">@c.CategoryName</div>
-                }
-            </div>
-        }
-        @if (statuses is not null)
-        {
-            <div class="statuses">
-                <span class="text-uppercase fw-bold">Status</span>
-                <div class="@GetSelectedStatus()" @onclick="() => OnStatusClick()">All</div>
-                @foreach (var s in statuses)
-                {
-                    <div class="@GetSelectedStatus(s.StatusName)" @onclick="() => OnStatusClick(s.StatusName)">@s.StatusName</div>
-                }
-            </div>
-        }
+        <div class="categories">
+            <span class="text-uppercase" fw-bold>Category</span>
+            <div class="@GetSelectedCategoryClass()" @onclick="() => OnCategoryClick()">All</div>
+            @foreach (var c in categories_)
+            {
+                <div class="@GetSelectedCategoryClass(c.Name)" @onclick="() => OnCategoryClick(c.Name)">@c.Name</div>
+            }
+        </div>
     </div>
 </div>
 
 @code {
-    private IList<CategoryModel> categories;
-    private IList<StatusModel> statuses;
-    private IList<ExpressionModel> expressions;
+    private const string AllCategory = "All";
 
-    private string selectedCategory = "All";
-    private string selectedStatus = "All";
-    private string searchText = "";
-    private bool isSortedByNew = true;
+    private IList<Category> categories_;
+    private IList<Expression> expressions_;
+
+    private string category_ = AllCategory;
+    private string searchText_ = string.Empty;
+    private SortType sortType_ = SortType.Alphabet;
+
+    #region Initialization
 
     protected async override Task OnInitializedAsync()
     {
-        categories = await categoryData.GetCategoriesAsync();
-        statuses = await statusData.GetStatusesAsync();
+        categories_ = await dbCategory.GetAllAsync();
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -105,179 +83,132 @@
         }
     }
 
-    private void LoadCreatePage()
-    {
-        navManager.NavigateTo("/Create");
-    }
-
-    private string SortedByNewClass(bool isNew)
-    {
-        return isNew == isSortedByNew ? "sort-selected" : "";
-    }
-
-    private string GetVoteClass(ExpressionModel expression)
-    {
-        if (expression.UserVotes is null || expression.UserVotes.Count == 0)
-        {
-            return "expression-entry-no-votes";
-        }
-        else
-        {
-            return "expression-entry-voted";
-        }
-    }
-
-    private string GetExpressionStatusClass(ExpressionModel expression)
-    {
-        if (expression is null || expression.Status is null)
-        {
-            return "expression-entry-status-none";
-        }
-
-        var result = expression.Status.StatusName switch
-        {
-            "Completed" => "expression-entry-status-completed",
-            "Watching" => "expression-entry-status-watching",
-            "Upcoming" => "expression-entry-status-upcoming",
-            "Dismissed" => "expression-entry-status-dismissed",
-            _ => "expression-entry-status-none",
-        };
-
-        return result;
-    }
-
-    private string GetSelectedCategory(string category = "All")
-    {
-        if (category == selectedCategory)
-        {
-            return "selected-category";
-        }
-        else
-        {
-            return "";
-        }
-    }
-
-    private string GetSelectedStatus(string status = "All")
-    {
-        if (status == selectedStatus)
-        {
-            return "selected-status";
-        }
-        else
-        {
-            return "";
-        }
-    }
-
     private async Task LoadFilterState()
     {
-        var stringResults = await sessionStorage.GetAsync<string>(nameof(selectedCategory));
-        selectedCategory = stringResults.Success ? stringResults.Value : "All";
+        var stringResults = await sessionStorage.GetAsync<string>(nameof(category_));
+        category_ = stringResults.Success ? stringResults.Value : AllCategory;
 
-        stringResults = await sessionStorage.GetAsync<string>(nameof(selectedStatus));
-        selectedStatus = stringResults.Success ? stringResults.Value : "All";
+        stringResults = await sessionStorage.GetAsync<string>(nameof(searchText_));
+        searchText_ = stringResults.Success ? stringResults.Value : string.Empty;
 
-        stringResults = await sessionStorage.GetAsync<string>(nameof(searchText));
-        searchText = stringResults.Success ? stringResults.Value : "";
-
-        var boolResults = await sessionStorage.GetAsync<bool>(nameof(isSortedByNew));
-        isSortedByNew = boolResults.Success ? boolResults.Value : true;
-    }
-
-    private async Task SaveFilterState()
-    {
-        await sessionStorage.SetAsync(nameof(selectedCategory), selectedCategory);
-        await sessionStorage.SetAsync(nameof(selectedStatus), selectedStatus);
-        await sessionStorage.SetAsync(nameof(searchText), searchText);
-        await sessionStorage.SetAsync(nameof(isSortedByNew), isSortedByNew);
+        var sortResults = await sessionStorage.GetAsync<SortType>(nameof(sortType_));
+        sortType_ = sortResults.Success ? sortResults.Value : SortType.Alphabet;
     }
 
     private async Task FilterExpressions()
     {
-        var result = await expressionData.GetApprovedExpressionsAsync();
+        IEnumerable<Expression> result = await dbExpression.GetAllAsync();
 
-        if (selectedCategory != "All")
+        if (category_ != AllCategory)
         {
-            result = result.Where(e => e.Category?.CategoryName == selectedCategory).ToList();
+            result = result.Where(e => e.Category.Name == category_);
         }
 
-        if (selectedStatus != "All")
+        if (!string.IsNullOrWhiteSpace(searchText_))
         {
-            result = result.Where(e => e.Status?.StatusName == selectedStatus).ToList();
+            result = result.Where(e => e.Word.Contains(searchText_, StringComparison.InvariantCultureIgnoreCase) ||
+                                       e.Translation.Contains(searchText_, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        if (!string.IsNullOrWhiteSpace(searchText))
+        result = sortType_ switch
         {
-            result = result.Where(e => e.Expression.Contains(searchText, StringComparison.InvariantCultureIgnoreCase) ||
-                                       e.Description.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
-                           .ToList();
-        }
+            SortType.Alphabet => result.OrderBy(e => e.Word),
+            SortType.New => result.OrderByDescending(e => e.DateCreated),
+            SortType.Popular => result.OrderBy(e => e.Likes),
+            _ => result
+        };
 
-        if (isSortedByNew)
-        {
-            result = result.OrderByDescending(e => e.DateCreated).ToList();
-        }
-        else
-        {
-            result = result.OrderByDescending(e => e.UserVotes.Count).ThenByDescending(e => e.DateCreated).ToList();
-        }
-
-        expressions = result;
+        expressions_ = result.ToList();
 
         await SaveFilterState();
     }
 
-    private async Task OrderByNew(bool isNew)
+    private async Task SaveFilterState()
     {
-        isSortedByNew = isNew;
-        await FilterExpressions();
+        await sessionStorage.SetAsync(nameof(category_), category_);
+        await sessionStorage.SetAsync(nameof(searchText_), searchText_);
+        await sessionStorage.SetAsync(nameof(sortType_), sortType_);
     }
 
-    private async Task OnSearchInput(string searchInput)
+    #endregion
+
+    #region Navigation
+
+    private void OpenCreate()
     {
-        searchText = searchInput;
-        await FilterExpressions();
+        navManager.NavigateTo("/Create");
     }
 
-    private async Task OnCategoryClick(string category = "All")
-    {
-        selectedCategory = category;
-        await FilterExpressions();
-    }
-
-    private async Task OnStatusClick(string status = "All")
-    {
-        selectedStatus = status;
-        await FilterExpressions();
-    }
-
-    private string GetUpvoteTopText(ExpressionModel expression)
-    {
-        if (expression.UserVotes?.Count > 0)
-        {
-            return expression.UserVotes.Count.ToString("00");
-        }
-        else
-        {
-            return "Click To";
-        }
-    }
-
-    private string GetUpvoteBottomText(ExpressionModel expression)
-    {
-        if (expression.UserVotes?.Count > 1)
-        {
-            return "Upvotes";
-        }
-        else
-        {
-            return "Upvote";
-        }
-    }
-
-    private void OpenDetails(ExpressionModel expression)
+    private void OpenDetails(Expression expression)
     {
         navManager.NavigateTo($"/Details/{expression.Id}");
     }
+
+    #endregion
+
+    #region Events
+
+    private async Task OnSort(SortType sorting)
+    {
+        sortType_ = sorting;
+        await FilterExpressions();
+    }
+
+    private async Task OnSearchInput(string searchText)
+    {
+        searchText_ = searchText;
+        await FilterExpressions();
+    }
+
+    private async Task OnCategoryClick(string category = AllCategory)
+    {
+        category_ = category;
+        await FilterExpressions();
+    }
+
+    #endregion
+
+    #region Markup
+
+    private string GetLikeTopText(Expression expression)
+    {
+        return expression.Likes > 0 ? expression.Likes.ToString("00") : "Click To";
+    }
+
+    private string GetLikeBottomText(Expression expression)
+    {
+        return expression.Likes > 1 ? "Likes" : "Like";
+    }
+
+    private string GetSortClass(SortType sortType)
+    {
+        return sortType switch
+        {
+            SortType.Alphabet => "sort-selected",
+            _ => string.Empty
+        };
+    }
+
+    private string GetLikeClass(Expression expression)
+    {
+        return expression.Likes > 0 ? "expression-entry-liked" : "expression-entry-no-likes";
+    }
+
+    private string GetSelectedCategoryClass(string category = AllCategory)
+    {
+        return category == category_ ? "selected-category" : string.Empty;
+    }
+
+    #endregion
+
+    #region Sort Type Class
+
+    private enum SortType
+    {
+        Alphabet,
+        New,
+        Popular
+    }
+
+    #endregion
 }

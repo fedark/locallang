@@ -1,30 +1,29 @@
 ﻿@page "/Details/{Id}"
 
-@inject IExpressionData expressionData
+@inject IExpressionCollection dbExpression
 @inject NavigationManager navManager
 
 <h1>Expression Details</h1>
 
 <div>
     <div>
-        @if (expression is not null)
+        @if (expression_ is not null)
         {
             <div>
                 <div>
                     <div>
-                        <div>@GetUpvoteTopText()</div>
+                        <div>@GetLikeTopText()</div>
                         <span class="oi oi-caret-top"></span>
-                        <div>@GetUpvoteBottomText()</div>
+                        <div>@GetLikeBottomText()</div>
                     </div>
                     <div>
-                        <div>@expression.DateCreated.ToString("yyyy-MM-dd")</div>
+                        <div>@expression_.DateCreated.ToString(ConfigurationExtensions.DateFormat)</div>
                     </div>
                 </div>
                 <div>
-                    <div>@expression.Expression</div>
-                    <div>@expression.Author.DispalyName</div>
-                    <div>@expression.Description</div>
-                    <div>@expression.Category?.CategoryName</div>
+                    <div>@expression_.Word</div>
+                    <div>@expression_.Translation</div>
+                    <div>@expression_.Category</div>
                 </div>
                 <div>
                     <button @onclick="ClosePage"></button>
@@ -34,32 +33,15 @@
     </div>
 </div>
 
-@if (expression?.Status is not null)
-{
-    <div>
-        <div>
-            <div></div>
-            <div>
-                <div>
-                    @expression.Status.StatusName
-                </div>
-                <div>
-                    @((MarkupString)expression.OwnerNotes)
-                </div>
-            </div>
-        </div>
-    </div>
-}
-
 @code {
     [Parameter]
     public string Id { get; set; }
 
-    private ExpressionModel expression;
+    private Expression expression_;
 
     protected async override Task OnInitializedAsync()
     {
-        expression = await expressionData.GetExpressionAsync(Id);
+        expression_ = await dbExpression.GetAsync(Id);
     }
 
     private void ClosePage()
@@ -67,27 +49,13 @@
         navManager.NavigateTo("/");
     }
 
-    private string GetUpvoteTopText()
+    private string GetLikeTopText()
     {
-        if (expression.UserVotes?.Count > 0)
-        {
-            return expression.UserVotes.Count.ToString("00");
-        }
-        else
-        {
-            return "Click To";
-        }
+        return expression_.Likes > 0 ? expression_.Likes.ToString("00") : "Click To";
     }
 
-    private string GetUpvoteBottomText()
+    private string GetLikeBottomText()
     {
-        if (expression.UserVotes?.Count > 1)
-        {
-            return "Upvotes";
-        }
-        else
-        {
-            return "Upvote";
-        }
+        return expression_.Likes > 1 ? "Likes" : "Like";
     }
 }

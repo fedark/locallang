@@ -6,14 +6,14 @@ namespace LocalLangUI.Models
 	{
 		[Required]
 		[MaxLength(75)]
-		public string Expression { get; set; }
+		public string Word { get; set; }
+
+		[MaxLength(500)]
+		public string Translation { get; set; }
 
 		[Required]
 		[MinLength(1)]
 		[Display(Name = "Category")]
-		public string CategoryId { get; set; }
-
-		[MaxLength(500)]
-		public string Description { get; set; }
+		public string Category { get; set; }
 	}
 }

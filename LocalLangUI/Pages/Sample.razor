@@ -1,0 +1,72 @@
+﻿@page "/Sample"
+
+@inject ICategoryCollection dbCategory
+@inject IExpressionCollection dbExpression
+
+<h3>Sample Data</h3>
+
+@if (categoriesCreated_)
+{
+    <h4>Categories have been created</h4>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="CreateCategories">Create Categories</button>
+}
+
+<button class="btn btn-danger" @onclick="GenerateSampleData">Generate Sample Data</button>
+
+@code {
+    private bool categoriesCreated_ = false;
+
+    private async Task CreateCategories()
+    {
+        var categories = await dbCategory.GetAllAsync();
+        if (categories.Count > 0)
+            return;
+
+        var categorySample = new List<(string, string)>
+        {
+            ("Word", "A single word that is completely different from base language."),
+            ("Form", "A form of a word that is similar to base language."),
+            ("Phrase", "A combination of two or more words."),
+            ("Proverb", "An expression with accomplished meaning.")
+        };
+
+        foreach (var (name, description) in categorySample)
+        {
+            var category = new Category(name, description);
+            await dbCategory.Create(category);
+        }
+
+        categoriesCreated_ = true;
+    }
+
+    private async Task GenerateSampleData()
+    {
+        var categories = await dbCategory.GetAllAsync();
+
+        var exprerssionSample = new List<(string, string)>
+        {
+            ("Агу", "ага"),
+            ("Ануча", "тряпка"),
+            ("Араць", "пахать"),
+            ("Бало", "старомодный"),
+            ("Бляха", "поднос"),
+            ("Браскать", "лязгать"),
+            ("Бэбах", "желудок свиньи"),
+            ("Бэз", "сирень"),
+            ("Вiдно", "светло")
+        };
+
+        var random = new Random();
+
+        foreach (var (word, transaltion) in exprerssionSample)
+        {
+            var categoryIndex = random.Next(0, categories.Count);
+            var expression = new Expression(word, transaltion, categories[categoryIndex]);
+            expression.Likes = random.Next(0, 10);
+            await dbExpression.Create(expression);
+        }
+    }
+}

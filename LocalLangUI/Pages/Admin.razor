@@ -1,0 +1,144 @@
+﻿@page "/Admin"
+
+@inject IExpressionCollection dbExpressions
+@inject NavigationManager navManager
+
+<h1>Pending Submissions</h1>
+
+<div>
+    <div>@submissions_?.Count Submissions</div>
+    <div>
+        <button @onclick="ClosePage"></button>
+    </div>
+</div>
+
+@if (submissions_ is not null)
+{
+    @foreach (var e in submissions_)
+    {
+        <div>
+            <div>
+                <button @onclick="() => Approve(e)">Approve</button>
+                <button @onclick="() => Reject(e)">Reject</button>
+            </div>
+            <div>
+                <div>
+                    @if (editedExpressionId_ == e.Id)
+                    {
+                        <EditForm Model="@editedWord_" OnSubmit="() => Save(e)">
+                            <InputText @bind-Value="editedWord_" />
+                            <button type="submit">
+                                <span class="oi oi-check"></span>
+                            </button>
+                            <button @onclick="Cancel">
+                                <span class="oi oi-x"></span>
+                            </button>
+                        </EditForm>
+                    }
+                    else
+                    {
+                        @e.Word
+                        <span class="oi oi-pencil" @onclick="() => EditWord(e)"></span>
+                    }
+                </div>
+            </div>
+            <div>@e.Category.Name</div>
+            <div>
+                <div>
+                    @if (editedExpressionId_ == e.Id)
+                    {
+                        <EditForm Model="@editedTranslation_" OnSubmit="(() => Save(e))">
+                            <InputText @bind-Value="editedTranslation_" />
+                            <button type="submit">
+                                <span class="oi oi-check"></span>
+                            </button>
+                            <button @onclick="() => editedExpressionId_ = string.Empty">
+                                <span class="oi oi-x"></span>
+                            </button>
+                        </EditForm>
+                    }
+                    else
+                    {
+                        @e.Translation
+                        <span class="oi oi-pencil" @onclick="() => EditTranslation(e)"></span>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    private IList<Expression> submissions_;
+
+    private string editedExpressionId_ = string.Empty;
+    private bool isWordEdited_ = false;
+    private bool isTranslationEdited_ = false;
+
+    private string editedWord_ = string.Empty;
+    private string editedTranslation_ = string.Empty;
+
+    protected async override Task OnInitializedAsync()
+    {
+        submissions_ = await dbExpressions.GetPendingAsync();
+    }
+
+    private void ClosePage()
+    {
+        navManager.NavigateTo("/");
+    }
+
+    private async Task Approve(Expression submission)
+    {
+        submission.Status = Status.Approved;
+        submissions_.Remove(submission);
+        await dbExpressions.UpdateAsync(submission);
+    }
+
+    private async Task Reject(Expression submission)
+    {
+        submission.Status = Status.Rejected;
+        submissions_.Remove(submission);
+        await dbExpressions.UpdateAsync(submission);
+    }
+
+    private void EditWord(Expression expression)
+    {
+        editedExpressionId_ = expression.Id;
+        isWordEdited_ = true;
+        isTranslationEdited_ = false;
+
+        editedWord_ = expression.Word;
+    }
+
+    private void EditTranslation(Expression expression)
+    {
+        editedExpressionId_ = expression.Id;
+        isWordEdited_ = false;
+        isTranslationEdited_ = true;
+
+        editedTranslation_ = expression.Translation;
+    }
+
+    private async Task Save(Expression expression)
+    {
+        if (isWordEdited_)
+        {
+            isWordEdited_ = false;
+            expression.Word = editedWord_;
+        }
+
+        if (isTranslationEdited_)
+        {
+            isTranslationEdited_ = false;
+            expression.Translation = editedTranslation_;
+        }
+
+        await dbExpressions.UpdateAsync(expression);
+    }
+
+    private void Cancel()
+    {
+        editedExpressionId_ = string.Empty;
+    }
+}

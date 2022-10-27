@@ -1,8 +1,7 @@
 ﻿@page "/Create"
 
-@inject ICategoryData categoryData
-@inject IExpressionData expressionData
-@inject IUserData userData
+@inject ICategoryCollection dbCategories
+@inject IExpressionCollection dbExpressions
 @inject NavigationManager navManager
 
 <h1>Make A Suggestion</h1>
@@ -12,37 +11,37 @@
         <div>
             <button @onclick="ClosePage"></button>
         </div>
-        @if (categories is not null)
+        @if (categories_ is not null)
         {
 
         }
-        <EditForm Model="createExpression" OnValidSubmit="CreateExpression">
+        <EditForm Model="newExpression_" OnValidSubmit="CreateExpression">
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div>
                 <label for="expression-text">Expression</label>
                 <div>Focus on the experssion you want to add.</div>
-                <InputText id="expression-text" @bind-Value="createExpression.Expression" />
+                <InputText id="expression-text" @bind-Value="newExpression_.Word" />
             </div>
             <div>
                 <label for="category">Category</label>
                 <div>Choose category.</div>
                 <div>
-                    <CustomInputRadioGroup id="category" @bind-Value="createExpression.CategoryId">
-                        @foreach (var c in categories)
+                    <CustomInputRadioGroup id="category" @bind-Value="newExpression_.Category">
+                        @foreach (var c in categories_)
                         {
                             <div>
                                 <InputRadio Value="@c.Id" id="@c.Id" />
-                                <label for="@c.Id">@c.CategoryName - @c.CategoryDescription</label>
+                                <label for="@c.Id">@c.Name</label>
                             </div>
                         }
                     </CustomInputRadioGroup>
                 </div>
             </div>
             <div>
-                <label for="description">Description</label>
-                <div>Briefly describe your expression.</div>
-                <InputTextArea id="description" @bind-Value="createExpression.Description" />
+                <label for="translation">Translation</label>
+                <div>Translate your expression.</div>
+                <InputTextArea id="translation" @bind-Value="newExpression_.Translation" />
             </div>
             <div>
                 <button type="submit">Suggest</button>
@@ -52,16 +51,12 @@
 </div>
 
 @code {
-    private CreateExpressionModel createExpression = new();
-    private IList<CategoryModel> categories;
-    private UserModel loggedInUser;
+    private CreateExpressionModel newExpression_ = new();
+    private IList<Category> categories_;
 
     protected async override Task OnInitializedAsync()
     {
-        categories = await categoryData.GetCategoriesAsync();
-
-        //TODO: replace with user lookup
-        loggedInUser = await userData.GetUserFromAuthentificationAsync("fk123");
+        categories_ = await dbCategories.GetAllAsync();
     }
 
     private void ClosePage()
@@ -71,21 +66,11 @@
 
     private async Task CreateExpression()
     {
-        var expression = new ExpressionModel
-        {
-            Author = new BasisUserModel(loggedInUser),
-            Category = categories.Where(c => c.Id == createExpression.CategoryId).FirstOrDefault(),
-            Description = createExpression.Description,
-            Expression = createExpression.Expression
-        };
+        var category = await dbCategories.GetOrDefaultAsync(newExpression_.Category);
+        var expression = new Expression(newExpression_.Word, newExpression_.Translation, category);
+        await dbExpressions.Create(expression);
 
-        if (expression.Category is null)
-        {
-            createExpression.CategoryId = "";
-        }
-
-        await expressionData.CreateExpressionAsync(expression);
-        createExpression = new();
+        newExpression_ = new();
         ClosePage();
     }
 }

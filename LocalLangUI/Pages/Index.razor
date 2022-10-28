@@ -1,18 +1,20 @@
 ﻿@page "/"
 
-@inject ICategoryCollection dbCategory
-@inject IExpressionCollection dbExpression
+@inject ICategoryCollection dbCategories
+@inject IExpressionCollection dbExpressions
 @inject NavigationManager navManager
 @inject ProtectedSessionStorage sessionStorage
 
-<h1 class="page-heading text-uppercase mb-4">Local Language Expressions</h1>
+<div class="page-heading-container">
+    <h1 class="page-heading text-uppercase mb-4">Local Language Expressions</h1>
+</div>
 
 <div class="expression-container">
     <button @onclick="OpenCreate" class="suggest-btn btn btn-outline-dark btn-lg text-uppercase">Suggest</button>
 </div>
 
 <div class="row">
-    <div class="expression-count col-md-4 text-dark mt-2">@expressions_.Count Expressions</div>
+    <div class="expression-count col-md-4 text-dark mt-2">@expressions_?.Count Expressions</div>
     <div class="col-md-4 col-xl-5 btn-group">
         <button class="btn btn-order @GetSortClass(SortType.Alphabet)" @onclick="() => OnSort(SortType.Alphabet)">Abc</button>
         <button class="btn btn-order @GetSortClass(SortType.New)" @onclick="() => OnSort(SortType.New)">New</button>
@@ -20,37 +22,43 @@
     </div>
     <div class="col-md-4 col-xl-3 search-box">
         <input type="text" placeholder="Search" aria-label="Search box" class="form-control rounded-control" 
-               @oninput="(text) => OnSearchInput((string)text.Value)" />
+               @oninput="(text) => OnSearchInput((string?)text.Value)" />
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-8 col-xl-9">
-        <Virtualize Items="@expressions_" Context="e" OverscanCount="10">
-            <div class="expression-entry">
-                <div class="@GetLikeClass(e)">
-                    <div class="text-uppercase">@GetLikeTopText(e)</div>
-                    <span class="oi oi-caret-top" style="font-size: 3rem"></span>
-                    <div class="text-uppercase">@GetLikeBottomText(e)</div>
-                </div>
-                <div class="expression-entry-text">
-                    <div class="expression-entry-text-title" @onclick="() => OpenDetails(e)">
-                        @e.Word
+        @if (expressions_ is not null)
+        {
+            <Virtualize Items="@expressions_" Context="e" OverscanCount="10">
+                <div class="expression-entry">
+                    <div class="@GetLikeClass(e)">
+                        <div class="text-uppercase">@GetLikeTopText(e)</div>
+                        <span class="oi oi-caret-top" style="font-size: 3rem"></span>
+                        <div class="text-uppercase">@GetLikeBottomText(e)</div>
                     </div>
-                    <div>
-                        <div class="expression-entry-text-category" @onclick="() => OpenDetails(e)">@e.Category.Name</div>
+                    <div class="expression-entry-text">
+                        <div class="expression-entry-text-title" @onclick="() => OpenDetails(e)">
+                            @e.Word
+                        </div>
+                        <div>
+                            <div class="expression-entry-text-category" @onclick="() => OpenDetails(e)">@e.Category.Name</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </Virtualize>
+            </Virtualize>
+        }
     </div>
     <div class="col-md-4 col-xl-3">
         <div class="categories">
             <span class="text-uppercase" fw-bold>Category</span>
             <div class="@GetSelectedCategoryClass()" @onclick="() => OnCategoryClick()">All</div>
-            @foreach (var c in categories_)
+            @if (categories_ is not null)
             {
-                <div class="@GetSelectedCategoryClass(c.Name)" @onclick="() => OnCategoryClick(c.Name)">@c.Name</div>
+                @foreach (var c in categories_)
+                {
+                    <div class="@GetSelectedCategoryClass(c.Name)" @onclick="() => OnCategoryClick(c.Name)">@c.Name</div>
+                }
             }
         </div>
     </div>
@@ -59,18 +67,18 @@
 @code {
     private const string AllCategory = "All";
 
-    private IList<Category> categories_;
-    private IList<Expression> expressions_;
+    private IList<Category>? categories_;
+    private IList<Expression>? expressions_;
 
     private string category_ = AllCategory;
-    private string searchText_ = string.Empty;
+    private string? searchText_;
     private SortType sortType_ = SortType.Alphabet;
 
     #region Initialization
 
     protected async override Task OnInitializedAsync()
     {
-        categories_ = await dbCategory.GetAllAsync();
+        categories_ = await dbCategories.GetAllAsync();
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -86,10 +94,10 @@
     private async Task LoadFilterState()
     {
         var stringResults = await sessionStorage.GetAsync<string>(nameof(category_));
-        category_ = stringResults.Success ? stringResults.Value : AllCategory;
+        category_ = stringResults.Success && stringResults.Value is not null? stringResults.Value : AllCategory;
 
         stringResults = await sessionStorage.GetAsync<string>(nameof(searchText_));
-        searchText_ = stringResults.Success ? stringResults.Value : string.Empty;
+        searchText_ = stringResults.Success && stringResults.Value is not null? stringResults.Value : string.Empty;
 
         var sortResults = await sessionStorage.GetAsync<SortType>(nameof(sortType_));
         sortType_ = sortResults.Success ? sortResults.Value : SortType.Alphabet;
@@ -97,28 +105,28 @@
 
     private async Task FilterExpressions()
     {
-        IEnumerable<Expression> result = await dbExpression.GetAllAsync();
+        IEnumerable<Expression>? result = await dbExpressions.GetAllAsync();
 
         if (category_ != AllCategory)
         {
-            result = result.Where(e => e.Category.Name == category_);
+            result = result?.Where(e => e.Category.Name == category_);
         }
 
         if (!string.IsNullOrWhiteSpace(searchText_))
         {
-            result = result.Where(e => e.Word.Contains(searchText_, StringComparison.InvariantCultureIgnoreCase) ||
+            result = result?.Where(e => e.Word.Contains(searchText_, StringComparison.InvariantCultureIgnoreCase) ||
                                        e.Translation.Contains(searchText_, StringComparison.InvariantCultureIgnoreCase));
         }
 
         result = sortType_ switch
         {
-            SortType.Alphabet => result.OrderBy(e => e.Word),
-            SortType.New => result.OrderByDescending(e => e.DateCreated),
-            SortType.Popular => result.OrderBy(e => e.Likes),
+            SortType.Alphabet => result?.OrderBy(e => e.Word),
+            SortType.New => result?.OrderByDescending(e => e.DateCreated),
+            SortType.Popular => result?.OrderBy(e => e.Likes),
             _ => result
         };
 
-        expressions_ = result.ToList();
+        expressions_ = result?.ToList();
 
         await SaveFilterState();
     }
@@ -126,7 +134,7 @@
     private async Task SaveFilterState()
     {
         await sessionStorage.SetAsync(nameof(category_), category_);
-        await sessionStorage.SetAsync(nameof(searchText_), searchText_);
+        await sessionStorage.SetAsync(nameof(searchText_), searchText_ ?? string.Empty);
         await sessionStorage.SetAsync(nameof(sortType_), sortType_);
     }
 
@@ -154,7 +162,7 @@
         await FilterExpressions();
     }
 
-    private async Task OnSearchInput(string searchText)
+    private async Task OnSearchInput(string? searchText)
     {
         searchText_ = searchText;
         await FilterExpressions();

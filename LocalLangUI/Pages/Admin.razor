@@ -69,7 +69,7 @@
 }
 
 @code {
-    private IList<Expression> submissions_;
+    private IList<Expression>? submissions_;
 
     private string editedExpressionId_ = string.Empty;
     private bool isWordEdited_ = false;
@@ -91,14 +91,14 @@
     private async Task Approve(Expression submission)
     {
         submission.Status = Status.Approved;
-        submissions_.Remove(submission);
+        submissions_?.Remove(submission);
         await dbExpressions.UpdateAsync(submission);
     }
 
     private async Task Reject(Expression submission)
     {
         submission.Status = Status.Rejected;
-        submissions_.Remove(submission);
+        submissions_?.Remove(submission);
         await dbExpressions.UpdateAsync(submission);
     }
 

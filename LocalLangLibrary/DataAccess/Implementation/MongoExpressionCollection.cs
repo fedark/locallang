@@ -23,9 +23,9 @@ namespace LocalLangLibrary.DataAccess
 			expressions_ = dbConnection_.ExpressionCollection;
 		}
 
-		public async Task<IList<Expression>> GetAllAsync()
+		public async Task<IList<Expression>?> GetAllAsync()
 		{
-			var result = cache_.Get<IList<Expression>>(CacheName);
+			var result = cache_.Get<IList<Expression>?>(CacheName);
 			if (result is null)
 			{
 				var allExpressions = await expressions_.FindAsync(e => e.Status == Status.Approved);
@@ -54,10 +54,10 @@ namespace LocalLangLibrary.DataAccess
 			cache_.Remove(CacheName);
 		}
 
-		public async Task<IList<Expression>> GetPendingAsync()
+		public async Task<IList<Expression>?> GetPendingAsync()
 		{
 			var result = await GetAllAsync();
-			return result.Where(e => e.Status == Status.Pending).ToList();
+			return result?.Where(e => e.Status == Status.Pending).ToList();
 		}
 
 		public async Task LikeAsync(string id)

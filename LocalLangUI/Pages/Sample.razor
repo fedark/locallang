@@ -1,7 +1,7 @@
 ﻿@page "/Sample"
 
-@inject ICategoryCollection dbCategory
-@inject IExpressionCollection dbExpression
+@inject ICategoryCollection dbCategories
+@inject IExpressionCollection dbExpressions
 
 <h3>Sample Data</h3>
 
@@ -21,8 +21,8 @@ else
 
     private async Task CreateCategories()
     {
-        var categories = await dbCategory.GetAllAsync();
-        if (categories.Count > 0)
+        var categories = await dbCategories.GetAllAsync();
+        if (categories?.Count > 0)
             return;
 
         var categorySample = new List<(string, string)>
@@ -36,7 +36,7 @@ else
         foreach (var (name, description) in categorySample)
         {
             var category = new Category(name, description);
-            await dbCategory.Create(category);
+            await dbCategories.Create(category);
         }
 
         categoriesCreated_ = true;
@@ -44,7 +44,16 @@ else
 
     private async Task GenerateSampleData()
     {
-        var categories = await dbCategory.GetAllAsync();
+        if (!categoriesCreated_)
+        {
+            await CreateCategories();
+        }
+
+        var categories = await dbCategories.GetAllAsync();
+        if (categories is null)
+        {
+            categories = new List<Category> { await dbCategories.GetOrDefaultAsync() };
+        }
 
         var exprerssionSample = new List<(string, string)>
         {
@@ -66,7 +75,8 @@ else
             var categoryIndex = random.Next(0, categories.Count);
             var expression = new Expression(word, transaltion, categories[categoryIndex]);
             expression.Likes = random.Next(0, 10);
-            await dbExpression.Create(expression);
+            expression.Status = Status.Approved;
+            await dbExpressions.Create(expression);
         }
     }
 }

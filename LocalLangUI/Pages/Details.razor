@@ -1,6 +1,6 @@
 ﻿@page "/Details/{Id}"
 
-@inject IExpressionCollection dbExpression
+@inject IExpressionCollection dbExpressions
 @inject NavigationManager navManager
 
 <h1>Expression Details</h1>
@@ -21,9 +21,9 @@
                     </div>
                 </div>
                 <div>
-                    <div>@expression_.Word</div>
-                    <div>@expression_.Translation</div>
-                    <div>@expression_.Category</div>
+                    <div>@expression_?.Word</div>
+                    <div>@expression_?.Translation</div>
+                    <div>@expression_?.Category</div>
                 </div>
                 <div>
                     <button @onclick="ClosePage"></button>
@@ -35,13 +35,14 @@
 
 @code {
     [Parameter]
-    public string Id { get; set; }
+    [NotNull]
+    public string? Id { get; set; }
 
-    private Expression expression_;
+    private Expression? expression_;
 
     protected async override Task OnInitializedAsync()
     {
-        expression_ = await dbExpression.GetAsync(Id);
+        expression_ = await dbExpressions.GetAsync(Id);
     }
 
     private void ClosePage()
@@ -51,11 +52,11 @@
 
     private string GetLikeTopText()
     {
-        return expression_.Likes > 0 ? expression_.Likes.ToString("00") : "Click To";
+        return expression_?.Likes > 0 ? expression_.Likes.ToString("00") : "Click To";
     }
 
     private string GetLikeBottomText()
     {
-        return expression_.Likes > 1 ? "Likes" : "Like";
+        return expression_?.Likes > 1 ? "Likes" : "Like";
     }
 }

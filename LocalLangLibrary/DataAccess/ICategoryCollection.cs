@@ -5,6 +5,6 @@ namespace LocalLangLibrary.DataAccess
 {
 	public interface ICategoryCollection : IDbCollection<Category>
 	{
-		Task<Category> GetOrDefaultAsync(string id);
+		Task<Category> GetOrDefaultAsync(string? id = null);
 	}
 }

@@ -11,10 +11,6 @@
         <div>
             <button @onclick="ClosePage"></button>
         </div>
-        @if (categories_ is not null)
-        {
-
-        }
         <EditForm Model="newExpression_" OnValidSubmit="CreateExpression">
             <DataAnnotationsValidator />
             <ValidationSummary />
@@ -27,15 +23,18 @@
                 <label for="category">Category</label>
                 <div>Choose category.</div>
                 <div>
-                    <CustomInputRadioGroup id="category" @bind-Value="newExpression_.Category">
-                        @foreach (var c in categories_)
-                        {
-                            <div>
-                                <InputRadio Value="@c.Id" id="@c.Id" />
-                                <label for="@c.Id">@c.Name</label>
-                            </div>
-                        }
-                    </CustomInputRadioGroup>
+                    @if (categories_ is not null)
+                    {
+                        <CustomInputRadioGroup id="category" @bind-Value="newExpression_.Category">
+                            @foreach (var c in categories_)
+                                {
+                                <div>
+                                    <InputRadio Value="@c.Id" id="@c.Id" />
+                                    <label for="@c.Id">@c.Name</label>
+                                </div>
+                                }
+                        </CustomInputRadioGroup>
+                    }
                 </div>
             </div>
             <div>
@@ -52,7 +51,7 @@
 
 @code {
     private CreateExpressionModel newExpression_ = new();
-    private IList<Category> categories_;
+    private IList<Category>? categories_;
 
     protected async override Task OnInitializedAsync()
     {

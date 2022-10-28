@@ -7,7 +7,7 @@ namespace LocalLangLibrary.DataAccess
 	{
 		Task Create(TDocument collection);
 		Task<TDocument?> GetAsync(string id);
-		Task<IList<TDocument>> GetAllAsync();
+		Task<IList<TDocument>?> GetAllAsync();
 		Task UpdateAsync(TDocument collection);
 	}
 }

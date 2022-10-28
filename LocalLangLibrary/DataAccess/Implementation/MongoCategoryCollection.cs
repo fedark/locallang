@@ -32,9 +32,9 @@ namespace LocalLangLibrary.DataAccess
 			return result.FirstOrDefault();
 		}
 
-		public async Task<Category> GetOrDefaultAsync(string id)
+		public async Task<Category> GetOrDefaultAsync(string? id = null)
 		{
-			var result = await GetAsync(id);
+			var result = id is not null ? await GetAsync(id) : null;
 			if (result is null)
 			{
 				if (defaultCategory_ is null)
@@ -49,9 +49,9 @@ namespace LocalLangLibrary.DataAccess
 			return result;
 		}
 
-		public async Task<IList<Category>> GetAllAsync()
+		public async Task<IList<Category>?> GetAllAsync()
 		{
-			var result = cache_.Get<IList<Category>>(CacheName);
+			var result = cache_.Get<IList<Category>?>(CacheName);
 			if (result is null)
 			{
 				var allCategories = await categories_.FindAsync(_ => true);

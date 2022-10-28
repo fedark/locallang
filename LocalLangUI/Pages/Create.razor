@@ -1,10 +1,11 @@
 ﻿@page "/Create"
 
+@inject Localization localization
 @inject ICategoryCollection dbCategories
 @inject IExpressionCollection dbExpressions
 @inject NavigationManager navManager
 
-<h1 class="page-heading text-uppercase mb-4">Make A Suggestion</h1>
+<h1 class="page-heading text-uppercase mb-4">@localization.SuggestionHeading</h1>
 
 <div class="create-form create-form-center">
     <div class="col-xl-8 col-lg-10 form-layout">
@@ -17,13 +18,13 @@
                 <DataAnnotationsValidator />
                 <ValidationSummary />
                 <div class="input-section">
-                    <label class="form-label input-label text-uppercase" for="expression-text">Expression</label>
-                    <div class="input-description">Focus on the experssion you want to add.</div>
+                    <label class="form-label input-label text-uppercase" for="expression-text">@localization.Expression</label>
+                    <div class="input-description">@localization.SuggestionExpressionDesctiption</div>
                     <InputText class="form-control" id="expression-text" @bind-Value="newExpression_.Word" />
                 </div>
                 <div class="input-section">
-                    <label class="form-label input-label text-uppercase" for="category">Category</label>
-                    <div class="input-description">Choose category.</div>
+                    <label class="form-label input-label text-uppercase" for="category">@localization.Category</label>
+                    <div class="input-description">@localization.SuggestionCategoryDesctiption</div>
                     <div class="col-lg-8">
                         <CustomInputRadioGroup id="category" @bind-Value="newExpression_.Category">
                             @foreach (var c in categories_)
@@ -37,12 +38,12 @@
                     </div>
                 </div>
                 <div class="input-section">
-                    <label class="form-label input-label text-uppercase" for="translation">Translation</label>
-                    <div class="input-description">Translate your expression.</div>
+                    <label class="form-label input-label text-uppercase" for="translation">@localization.Translation</label>
+                    <div class="input-description">@localization.SuggestionTranslationDesctiption</div>
                     <InputTextArea class="form-control" id="translation" @bind-Value="newExpression_.Translation" />
                 </div>
                 <div class="center-children">
-                    <button class="btn btn-main btn-lg text-uppercase" type="submit">Suggest</button>
+                    <button class="btn btn-main btn-lg text-uppercase" type="submit">@localization.SuggestButton</button>
                 </div>
             </EditForm>
         }

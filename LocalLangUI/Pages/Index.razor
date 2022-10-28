@@ -20,7 +20,7 @@
         <button class="btn btn-order @GetSortClass(sortType_ == SortType.Popular)" @onclick="() => OnSort(SortType.Popular)">@localization.SortPopular</button>
     </div>
     <div class="col-md-4 col-xl-3 search-box">
-        <input type="text" placeholder="Поиск" aria-label="Search box" class="form-control rounded-control" 
+        <input type="text" placeholder=@localization.SearchPlaceholder aria-label="Search box" class="form-control rounded-control" 
                @oninput="(text) => OnSearchInput((string?)text.Value)" />
     </div>
 </div>
@@ -50,8 +50,8 @@
     </div>
     <div class="col-md-4 col-xl-3">
         <div class="categories">
-            <span class="text-uppercase" fw-bold>Category</span>
-            <div class="@GetSelectedCategoryClass()" @onclick="() => OnCategoryClick()">All</div>
+            <span class="text-uppercase" fw-bold>@localization.CategoryHeading</span>
+            <div class="@GetSelectedCategoryClass()" @onclick="() => OnCategoryClick()">@localization.CategoryAll</div>
             @if (categories_ is not null)
             {
                 @foreach (var c in categories_)
@@ -185,12 +185,12 @@
 
     private string GetLikeTopText(Expression expression)
     {
-        return expression.Likes > 0 ? expression.Likes.ToString("00") : "Click To";
+        return expression.Likes > 0 ? expression.Likes.ToString("00") : localization.LikeTopText;
     }
 
     private string GetLikeBottomText(Expression expression)
     {
-        return expression.Likes > 1 ? "Likes" : "Like";
+        return expression.Likes > 1 ? localization.LikeBottomTextPlural : localization.LikeBottomText;
     }
 
     private string GetSortClass(bool isSelected)

@@ -1,27 +1,26 @@
 ﻿@page "/"
 
+@inject Localization localization
 @inject ICategoryCollection dbCategories
 @inject IExpressionCollection dbExpressions
 @inject NavigationManager navManager
 @inject ProtectedSessionStorage sessionStorage
 
-<div class="page-heading-container">
-    <h1 class="page-heading text-uppercase mb-4">Local Language Expressions</h1>
-</div>
+<h1 class="page-heading text-uppercase mb-4">@localization.PageHeading</h1>
 
-<div class="expression-container">
-    <button @onclick="OpenCreate" class="suggest-btn btn btn-outline-dark btn-lg text-uppercase">Suggest</button>
+<div class="suggest-container">
+    <button @onclick="OpenCreate" class="suggest-btn btn btn-outline-dark btn-lg text-uppercase">@localization.SuggestButton</button>
 </div>
 
 <div class="row">
-    <div class="expression-count col-md-4 text-dark mt-2">@expressions_?.Count Expressions</div>
+    <div class="expression-count col-md-4 text-dark mt-2">@expressions_?.Count @localization.ExpressionPlural</div>
     <div class="col-md-4 col-xl-5 btn-group">
-        <button class="btn btn-order @GetSortClass(SortType.Alphabet)" @onclick="() => OnSort(SortType.Alphabet)">Abc</button>
-        <button class="btn btn-order @GetSortClass(SortType.New)" @onclick="() => OnSort(SortType.New)">New</button>
-        <button class="btn btn-order @GetSortClass(SortType.Popular)" @onclick="() => OnSort(SortType.Popular)">Popular</button>
+        <button class="btn btn-order @GetSortClass(sortType_ == SortType.Alphabet)" @onclick="() => OnSort(SortType.Alphabet)">@localization.SortAlphabet</button>
+        <button class="btn btn-order @GetSortClass(sortType_ == SortType.New)" @onclick="() => OnSort(SortType.New)">@localization.SortNew</button>
+        <button class="btn btn-order @GetSortClass(sortType_ == SortType.Popular)" @onclick="() => OnSort(SortType.Popular)">@localization.SortPopular</button>
     </div>
     <div class="col-md-4 col-xl-3 search-box">
-        <input type="text" placeholder="Search" aria-label="Search box" class="form-control rounded-control" 
+        <input type="text" placeholder="Поиск" aria-label="Search box" class="form-control rounded-control" 
                @oninput="(text) => OnSearchInput((string?)text.Value)" />
     </div>
 </div>
@@ -32,7 +31,7 @@
         {
             <Virtualize Items="@expressions_" Context="e" OverscanCount="10">
                 <div class="expression-entry">
-                    <div class="@GetLikeClass(e)">
+                    <div class="@GetLikeClass(e)" @onclick="() => Like(e)">
                         <div class="text-uppercase">@GetLikeTopText(e)</div>
                         <span class="oi oi-caret-top" style="font-size: 3rem"></span>
                         <div class="text-uppercase">@GetLikeBottomText(e)</div>
@@ -122,7 +121,7 @@
         {
             SortType.Alphabet => result?.OrderBy(e => e.Word),
             SortType.New => result?.OrderByDescending(e => e.DateCreated),
-            SortType.Popular => result?.OrderBy(e => e.Likes),
+            SortType.Popular => result?.OrderByDescending(e => e.Likes),
             _ => result
         };
 
@@ -174,6 +173,12 @@
         await FilterExpressions();
     }
 
+    private async Task Like(Expression expression)
+    {
+        expression.Likes++;
+        await dbExpressions.UpdateAsync(expression);
+    }
+
     #endregion
 
     #region Markup
@@ -188,13 +193,9 @@
         return expression.Likes > 1 ? "Likes" : "Like";
     }
 
-    private string GetSortClass(SortType sortType)
+    private string GetSortClass(bool isSelected)
     {
-        return sortType switch
-        {
-            SortType.Alphabet => "sort-selected",
-            _ => string.Empty
-        };
+        return isSelected ? "order-selected" : string.Empty;
     }
 
     private string GetLikeClass(Expression expression)

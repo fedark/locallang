@@ -22,6 +22,8 @@ namespace LocalLangUI
             services.AddServerSideBlazor();
             services.AddMemoryCache();
 
+            services.AddSingleton<Localization>();
+
             services.AddSingleton<IDbConnection, DbConnection>();
             services.AddSingleton<ICategoryCollection, MongoCategoryCollection>();
             services.AddSingleton<IExpressionCollection, MongoExpressionCollection>();

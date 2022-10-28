@@ -14,8 +14,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 body {
-    //background: url(../images/pattern-summer-wallpaper.png) no-repeat center center fixed;
-    background-color: antiquewhite;
+    background: #AA90C5;
     background-size: cover;
     height: 100%;
 }
@@ -69,11 +68,14 @@ a, .btn-link {
         top: 0.5rem;
     }
 
+/*Heading, Suggestion************************************************/
+
 .page-heading {
     text-align: center;
+    color: white;
 }
 
-.expression-container {
+.suggest-container {
     display: flex;
     justify-content: center;
     margin-bottom: 3rem;
@@ -94,10 +96,13 @@ a, .btn-link {
     border-color: #000000;
 }
 
+/*Count, Sort, Search************************************************/
+
 .expression-count {
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     font-size: 1rem;
+    padding-left: 30px;
 }
 
 .btn:focus,
@@ -106,19 +111,15 @@ form-control:focus {
 }
 
 .btn-order {
-    background-color: #000000;
-    border: 0px solid #DDDDDD;
+    background-color: #E5E5E5;
+    border: 0px solid black;
     border-radius: 10px;
 }
 
-.sort-selected {
-    background-color: #DDDDDD;
-    color: #FFFFFF;
+.order-selected {
     font-weight: 700;
+    background-color: darkgray;
 }
-    .sort-selected:hover {
-        color: #FFFFFF;
-    }
 
 .search-box {
     --bs-gutter-x: 3.5rem;
@@ -128,28 +129,11 @@ form-control:focus {
     border-radius: 10px;
 }
 
-.categories {
-    margin: 1rem;
-    background-color: #FFFFFF;
-    border-radius: 10px;
-    padding: 1rem;
-}
+/*Expression, Category************************************************/
 
-    .categories div {
-        margin-top: 1rem;
-    }
-
-        .categories div:hover {
-            cursor: pointer;
-        }
-
-.selected-category {
-    font-weight: 700;
-}
-
-.expresison-entry {
+.expression-entry {
     display: grid;
-    grid-template-columns: 142px 1fr 45px;
+    grid-template-columns: 142px 1fr;
     border-radius: 20px;
     margin: 20px 0;
     box-shadow: rgba(0,0,0,0.35) 0 5px 15px;
@@ -158,10 +142,10 @@ form-control:focus {
 .expression-entry-no-likes,
 .expression-entry-liked {
     text-align: center;
-    border-right: 3px #39BAD8 solid;
+    border-right: 3px cadetblue solid;
     border-top-left-radius: 15px;
     border-bottom-left-radius: 15px;
-    background-color: #39BAD8;
+    background-color: cadetblue;
     color: white;
     display: flex;
     flex-flow: column;
@@ -173,15 +157,13 @@ form-control:focus {
     cursor: pointer;
 }
 
-.expression-entry-no-votes {
-    background-color: #DDDDDD;
-    color: white;
-    border-color: #DDDDDD;
+.expression-entry-no-likes {
+    background-color: #E5E5E5;
+    border-color: cadetblue;
 }
 
-.expression-entry-voted {
-    background-color: #39BAD8;
-    color: white;
+.expression-entry-liked {
+    background-color: cadetblue;
 }
 
 .expression-entry-text {
@@ -189,7 +171,9 @@ form-control:focus {
     flex-direction: column;
     padding: 10px;
     padding-left: 20px;
-    background-color: white;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background-color: #E5E5E5;
 }
 
 .expression-entry-text-title {
@@ -206,4 +190,23 @@ form-control:focus {
     flex: 1;
     display: flex;
     align-items: flex-end;
+}
+
+.categories {
+    margin-top: 1rem;
+    background-color: #E5E5E5;
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+    .categories div {
+        margin-top: 1rem;
+    }
+
+        .categories div:hover {
+            cursor: pointer;
+        }
+
+.selected-category {
+    font-weight: 700;
 }

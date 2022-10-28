@@ -50,10 +50,6 @@ else
         }
 
         var categories = await dbCategories.GetAllAsync();
-        if (categories is null)
-        {
-            categories = new List<Category> { await dbCategories.GetOrDefaultAsync() };
-        }
 
         var exprerssionSample = new List<(string, string)>
         {
@@ -72,7 +68,9 @@ else
 
         foreach (var (word, transaltion) in exprerssionSample)
         {
+#nullable disable
             var categoryIndex = random.Next(0, categories.Count);
+#nullable restore
             var expression = new Expression(word, transaltion, categories[categoryIndex]);
             expression.Likes = random.Next(0, 10);
             expression.Status = Status.Approved;

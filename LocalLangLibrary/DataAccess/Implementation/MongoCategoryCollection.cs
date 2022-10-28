@@ -32,23 +32,6 @@ namespace LocalLangLibrary.DataAccess
 			return result.FirstOrDefault();
 		}
 
-		public async Task<Category> GetOrDefaultAsync(string? id = null)
-		{
-			var result = id is not null ? await GetAsync(id) : null;
-			if (result is null)
-			{
-				if (defaultCategory_ is null)
-				{
-					defaultCategory_ = new Category("General");
-					await UpdateAsync(defaultCategory_);
-				}
-
-				result = defaultCategory_;
-			}
-
-			return result;
-		}
-
 		public async Task<IList<Category>?> GetAllAsync()
 		{
 			var result = cache_.Get<IList<Category>?>(CacheName);

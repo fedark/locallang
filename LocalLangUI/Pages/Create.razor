@@ -4,48 +4,48 @@
 @inject IExpressionCollection dbExpressions
 @inject NavigationManager navManager
 
-<h1>Make A Suggestion</h1>
+<h1 class="page-heading text-uppercase mb-4">Make A Suggestion</h1>
 
-<div>
-    <div>
-        <div>
-            <button @onclick="ClosePage"></button>
+<div class="create-form create-form-center">
+    <div class="col-xl-8 col-lg-10 form-layout">
+        <div class="close-button-section">
+            <button class="btn" @onclick="ClosePage">🗙</button>
         </div>
-        <EditForm Model="newExpression_" OnValidSubmit="CreateExpression">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <div>
-                <label for="expression-text">Expression</label>
-                <div>Focus on the experssion you want to add.</div>
-                <InputText id="expression-text" @bind-Value="newExpression_.Word" />
-            </div>
-            <div>
-                <label for="category">Category</label>
-                <div>Choose category.</div>
-                <div>
-                    @if (categories_ is not null)
-                    {
+        @if (categories_ is not null)
+        {
+            <EditForm Model="newExpression_" OnValidSubmit="CreateExpression">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="input-section">
+                    <label class="form-label input-label text-uppercase" for="expression-text">Expression</label>
+                    <div class="input-description">Focus on the experssion you want to add.</div>
+                    <InputText class="form-control" id="expression-text" @bind-Value="newExpression_.Word" />
+                </div>
+                <div class="input-section">
+                    <label class="form-label input-label text-uppercase" for="category">Category</label>
+                    <div class="input-description">Choose category.</div>
+                    <div class="col-lg-8">
                         <CustomInputRadioGroup id="category" @bind-Value="newExpression_.Category">
                             @foreach (var c in categories_)
-                                {
-                                <div>
+                            {
+                                <div class="radio-item-group">
                                     <InputRadio Value="@c.Id" id="@c.Id" />
                                     <label for="@c.Id">@c.Name</label>
                                 </div>
-                                }
+                            }
                         </CustomInputRadioGroup>
-                    }
+                    </div>
                 </div>
-            </div>
-            <div>
-                <label for="translation">Translation</label>
-                <div>Translate your expression.</div>
-                <InputTextArea id="translation" @bind-Value="newExpression_.Translation" />
-            </div>
-            <div>
-                <button type="submit">Suggest</button>
-            </div>
-        </EditForm>
+                <div class="input-section">
+                    <label class="form-label input-label text-uppercase" for="translation">Translation</label>
+                    <div class="input-description">Translate your expression.</div>
+                    <InputTextArea class="form-control" id="translation" @bind-Value="newExpression_.Translation" />
+                </div>
+                <div class="center-children">
+                    <button class="btn btn-main btn-lg text-uppercase" type="submit">Suggest</button>
+                </div>
+            </EditForm>
+        }
     </div>
 </div>
 
@@ -65,8 +65,10 @@
 
     private async Task CreateExpression()
     {
-        var category = await dbCategories.GetOrDefaultAsync(newExpression_.Category);
+#nullable disable
+        var category = await dbCategories.GetAsync(newExpression_.Category);
         var expression = new Expression(newExpression_.Word, newExpression_.Translation, category);
+#nullable restore
         await dbExpressions.Create(expression);
 
         newExpression_ = new();

@@ -210,3 +210,92 @@ form-control:focus {
 .selected-category {
     font-weight: 700;
 }
+
+/*Create Page************************************************/
+
+.create-form-center {
+    justify-content: center;
+    display: flex;
+    align-items: center;
+}
+
+.form-layout {
+    background-color: white;
+    border-radius: 15px;
+    padding: 2rem;
+}
+
+    .form-layout a {
+        font-weight: 700;
+        color: cadetblue;
+    }
+
+        .form-layout a:hover {
+            font-weight: 700;
+            color: cadetblue;
+            text-decoration: underline;
+        }
+
+.close-button-section {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.input-section {
+    margin-bottom: 2rem;
+}
+
+.input-label {
+    font-weight: 700;
+}
+
+.input-description {
+    margin-bottom: 0.5rem;
+}
+
+.radio-item-group input[type="radio"] {
+    display: none;
+}
+
+.radio-item-group label {
+    border-color: cadetblue;
+    border-width: 1px;
+    padding: 0.3rem 1.5rem;
+    border-radius: 10px;
+    width: 100%;
+    border-style: solid;
+}
+
+.radio-item-group input[type="radio"]:checked + label {
+    background-color: cadetblue;
+    color: white;
+    width: 100%;
+    border: 1px cadetblue solid;
+}
+
+.radio-item-group {
+    margin: 0.5rem;
+}
+
+.center-children {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-main {
+    color: white;
+    background-color: cadetblue;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    border-radius: 10px;
+    border-width: 3px;
+}
+
+.btn-main:hover {
+    color: cadetblue;
+    border-color: cadetblue;
+    background-color: white;
+    border-width: 3px;
+}

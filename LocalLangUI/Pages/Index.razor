@@ -50,7 +50,7 @@
     </div>
     <div class="col-md-4 col-xl-3">
         <div class="categories">
-            <span class="text-uppercase fw-bold">@localization.CategoryHeading</span>
+            <span class="text-uppercase category-bold">@localization.CategoryHeading</span>
             <div class="@GetSelectedCategoryClass()" @onclick="() => OnCategoryClick()">@localization.CategoryAll</div>
             @if (categories_ is not null)
             {
@@ -190,7 +190,20 @@
 
     private string GetLikeBottomText(Expression expression)
     {
-        return expression.Likes > 1 ? localization.LikeBottomTextPlural : localization.LikeBottomText;
+        if (expression.Likes < 1)
+        {
+            return string.Empty;
+        }
+
+        return (expression.Likes % 100, expression.Likes % 10) switch
+        {
+            (1, _) => localization.LikeBottomText,
+            ( >= 2 and <= 4, _) => localization.LikeBottomTextPlural2to4,
+            ( > 4 and <= 20, _) => localization.LikeBottomTextPlural,
+            (_, 1) => localization.LikeBottomText,
+            (_, >= 2 and <= 4) => localization.LikeBottomTextPlural2to4,
+            _ => localization.LikeBottomTextPlural,
+        };
     }
 
     private string GetSortClass(bool isSelected)

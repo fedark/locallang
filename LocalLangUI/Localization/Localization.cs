@@ -14,6 +14,7 @@
 
 		public string LikeTopText { get; } = "Лайкнуть";
 		public string LikeBottomText { get; } = "Лайк";
+		public string LikeBottomTextPlural2to4 { get; } = "Лайкa";
 		public string LikeBottomTextPlural { get; } = "Лайков";
 
 		public string CategoryHeading { get; } = "Категория";

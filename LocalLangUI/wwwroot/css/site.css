@@ -111,14 +111,13 @@ form-control:focus {
 }
 
 .btn-order {
-    background-color: #E5E5E5;
+    background-color: white;
     border: 0px solid black;
     border-radius: 10px;
 }
 
 .order-selected {
-    font-weight: 700;
-    background-color: darkgray;
+    background-color: #E5E5E5;
 }
 
 .search-box {
@@ -173,7 +172,7 @@ form-control:focus {
     padding-left: 20px;
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
-    background-color: #E5E5E5;
+    background-color: white;
 }
 
 .expression-entry-text-title {
@@ -194,21 +193,27 @@ form-control:focus {
 
 .categories {
     margin-top: 1rem;
-    background-color: #E5E5E5;
+    background-color: white;
     border-radius: 10px;
     padding: 1rem;
 }
 
     .categories div {
-        margin-top: 1rem;
+        margin-top: 0.5rem;
+        padding-left: 1rem;
     }
 
         .categories div:hover {
             cursor: pointer;
         }
 
-.selected-category {
+.category-bold {
     font-weight: 700;
+}
+
+.selected-category {
+    border-radius: 8px;
+    background-color: #E5E5E5;
 }
 
 /*Create Page************************************************/

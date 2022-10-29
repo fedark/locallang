@@ -8,11 +8,11 @@
 <h1 class="page-heading text-uppercase mb-4">@LabelResource.PageHeading</h1>
 
 <div class="suggest-container">
-    <button @onclick="OpenCreate" class="suggest-btn btn btn-outline-dark btn-lg text-uppercase">@GetExpressionCountText()</button>
+    <button @onclick="OpenCreate" class="suggest-btn btn btn-outline-dark btn-lg text-uppercase">@LabelResource.SuggestButton</button>
 </div>
 
 <div class="row">
-    <div class="expression-count col-md-6 text-dark mt-2">@expressions_?.Count @LabelResource.ExpressionPlural</div>
+    <div class="expression-count col-md-6 text-dark mt-2">@expressions_?.Count @GetExpressionCountText()</div>
     <div class="col-md-2 col-xl-3 btn-group">
         <button class="btn btn-order @GetSortClass(sortType_ == SortType.Alphabet)" @onclick="() => OnSort(SortType.Alphabet)">@LabelResource.SortAlphabet</button>
         <button class="btn btn-order @GetSortClass(sortType_ == SortType.New)" @onclick="() => OnSort(SortType.New)">@LabelResource.SortNew</button>
@@ -21,6 +21,28 @@
     <div class="col-md-4 col-xl-3 search-box">
         <input type="text" placeholder=@LabelResource.SearchPlaceholder aria-label="Search box" class="form-control rounded-control" 
                @oninput="(text) => OnSearchInput((string?)text.Value)" />
+    </div>
+    <div class="col-12 d-block d-md-none">
+        @if (categories_ is not null && showCategories_)
+        {
+        <div class="categories">
+            <span class="text-uppercase category-bold">@LabelResource.Category</span>
+            <div class="@GetSelectedCategoryClass()" @onclick="() => OnCategoryClick()">@LabelResource.CategoryAll</div>
+            @if (categories_ is not null)
+            {
+                @foreach (var c in categories_)
+                {
+                    <div class="@GetSelectedCategoryClass(c.Name)" @onclick="() => OnCategoryClick(c.Name)">@c.Name</div>
+                }
+            }
+        </div>
+        }
+        else
+        {
+            <div class="categories" @onclick="() => showCategories_ = true">
+                <span class="selected-category-single">@category_</span>
+            </div>
+        }
     </div>
 </div>
 
@@ -47,7 +69,7 @@
             </Virtualize>
         }
     </div>
-    <div class="col-md-4 col-xl-3">
+    <div class="col-md-4 col-xl-3 d-none d-md-block">
         <div class="categories">
             <span class="text-uppercase category-bold">@LabelResource.Category</span>
             <div class="@GetSelectedCategoryClass()" @onclick="() => OnCategoryClick()">@LabelResource.CategoryAll</div>
@@ -71,6 +93,7 @@
     private string category_ = AllCategory;
     private string? searchText_;
     private SortType sortType_ = SortType.Alphabet;
+    private bool showCategories_ = false;
 
     #region Initialization
 
@@ -169,6 +192,7 @@
     private async Task OnCategoryClick(string category = AllCategory)
     {
         category_ = category;
+        showCategories_ = false;
         await FilterExpressions();
     }
 

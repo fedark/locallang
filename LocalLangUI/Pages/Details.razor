@@ -5,8 +5,8 @@
 
 <h1 class="page-heading text-uppercase mb-4">@LabelResource.DetailsHeading</h1>
 
-<div class="row justify-content-center detail-form">
-    <div class="col-xl-8 col-lg-10 form-layout">
+<div class="row justify-content-center">
+    <div class="col-xl-8 col-lg-10 form-layout detail-form-layout">
         @if (expression_ is not null)
         {
             <div class="row expression-detail-row">
@@ -23,12 +23,18 @@
                     </div>
                     <div class="expression-detail-text">
                         <div class="mb-2 expression-detail-word">@expression_?.Word</div>
-                        <div class="mb-2">@expression_?.Translation</div>
-                        <div class="mb-2 expression-entry-text-category">@expression_?.Category.Name</div>
+                        <div class="mb-2 d-none d-md-block">@expression_?.Translation</div>
+                        <div class="mb-2 expression-entry-text-category d-none d-md-block">@expression_?.Category.Name</div>
                     </div>
                 </div>
                 <div class="col-1">
                     <button class="btn" @onclick="ClosePage">🗙</button>
+                </div>
+            </div>
+            <div class="row d-block d-md-none">
+                <div class="expression-detail-text">
+                    <div class="mb-2">@expression_?.Translation</div>
+                    <div class="mb-2 expression-entry-text-category">@expression_?.Category.Name</div>
                 </div>
             </div>
         }

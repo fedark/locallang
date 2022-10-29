@@ -116,6 +116,10 @@ form-control:focus {
     border-radius: 10px;
 }
 
+    .btn-order:hover {
+        background-color: lightgray;
+    }
+
 .order-selected {
     background-color: #E5E5E5;
 }
@@ -132,9 +136,9 @@ form-control:focus {
 
 .expression-entry {
     display: grid;
-    grid-template-columns: 142px 1fr;
+    grid-template-columns: 110px 1fr;
     border-radius: 20px;
-    margin: 20px 0;
+    margin: 10px 0;
     box-shadow: rgba(0,0,0,0.35) 0 5px 15px;
 }
 
@@ -149,10 +153,8 @@ form-control:focus {
     display: flex;
     flex-flow: column;
     justify-content: center;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-    font-size: 0.8rem;
-    min-height: 142px;
+    font-size: 0.7rem;
+    min-height: 110px;
     cursor: pointer;
 }
 
@@ -164,6 +166,10 @@ form-control:focus {
 .expression-entry-liked {
     background-color: cadetblue;
 }
+    .expression-entry-no-likes:hover,
+    .expression-entry-liked:hover {
+        background-color: lightgray;
+    }
 
 .expression-entry-like {
     font-size: 3rem;
@@ -178,6 +184,11 @@ form-control:focus {
     border-bottom-right-radius: 20px;
     background-color: white;
 }
+
+    .expression-entry-text:hover {
+        background-color: lightgray;
+        cursor: pointer;
+    }
 
 .expression-entry-text-title {
     flex-grow: 1;
@@ -209,6 +220,8 @@ form-control:focus {
 
         .categories div:hover {
             cursor: pointer;
+            background-color: lightgray;
+            border-radius: 10px;
         }
 
 .category-bold {
@@ -323,7 +336,7 @@ form-control:focus {
 
 .expression-detail-no-likes,
 .expression-detail-liked {
-    border: 3px solid cadetblue;
+    box-shadow: rgba(0,0,0,0.35) 0 5px 15px;
     border-radius: 10px;
     text-align: center;
     line-height: 1rem;
@@ -337,12 +350,16 @@ form-control:focus {
 
 .expression-detail-no-likes {
     background-color: #E5E5E5;
-    border-color: cadetblue;
 }
 
 .expression-detail-liked {
     background-color: cadetblue;
 }
+
+    .expression-detail-no-likes:hover,
+    .expression-detail-liked:hover {
+        background-color: lightgray;
+    }
 
 .expression-detail-like {
     font-size: 2.7rem;

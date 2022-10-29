@@ -12,8 +12,8 @@
 </div>
 
 <div class="row">
-    <div class="expression-count col-md-4 text-dark mt-2">@expressions_?.Count @LabelResource.ExpressionPlural</div>
-    <div class="col-md-4 col-xl-5 btn-group">
+    <div class="expression-count col-md-6 text-dark mt-2">@expressions_?.Count @LabelResource.ExpressionPlural</div>
+    <div class="col-md-2 col-xl-3 btn-group">
         <button class="btn btn-order @GetSortClass(sortType_ == SortType.Alphabet)" @onclick="() => OnSort(SortType.Alphabet)">@LabelResource.SortAlphabet</button>
         <button class="btn btn-order @GetSortClass(sortType_ == SortType.New)" @onclick="() => OnSort(SortType.New)">@LabelResource.SortNew</button>
         <button class="btn btn-order @GetSortClass(sortType_ == SortType.Popular)" @onclick="() => OnSort(SortType.Popular)">@LabelResource.SortPopular</button>

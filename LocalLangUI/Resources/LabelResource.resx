@@ -117,22 +117,61 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CategoryInvalidError" xml:space="preserve">
-    <value>Категория не определена</value>
+  <data name="PageHeading" xml:space="preserve">
+    <value>Славечкi</value>
   </data>
-  <data name="CategoryRequiredError" xml:space="preserve">
-    <value>Ты далбаеб? Сказано же, выберите категорию, блять</value>
+  <data name="SuggestButton" xml:space="preserve">
+    <value>Предложить</value>
   </data>
-  <data name="ExpressionInvalidError" xml:space="preserve">
-    <value>Слишком длинное выражение</value>
+  <data name="Expression" xml:space="preserve">
+    <value>Выражение</value>
   </data>
-  <data name="ExpressionRequiredError" xml:space="preserve">
-    <value>Укажите выражение</value>
+  <data name="ExpressionPlural" xml:space="preserve">
+    <value>Выражений</value>
   </data>
-  <data name="TranslationInvalidError" xml:space="preserve">
-    <value>Слишком длинный перевод</value>
+  <data name="SortAlphabet" xml:space="preserve">
+    <value>Абв</value>
   </data>
-  <data name="TranslationRequiredError" xml:space="preserve">
-    <value>Укажите перевод</value>
+  <data name="SortNew" xml:space="preserve">
+    <value>Новые</value>
+  </data>
+  <data name="SortPopular" xml:space="preserve">
+    <value>Популярные</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
+  <data name="LikeTopText" xml:space="preserve">
+    <value>Лайкнуть</value>
+  </data>
+  <data name="LikeBottomText" xml:space="preserve">
+    <value>Лайк</value>
+  </data>
+  <data name="LikeBottomTextPlural2to4" xml:space="preserve">
+    <value>Лайкa</value>
+  </data>
+  <data name="LikeBottomTextPlural" xml:space="preserve">
+    <value>Лайков</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Категория</value>
+  </data>
+  <data name="CategoryAll" xml:space="preserve">
+    <value>Все</value>
+  </data>
+  <data name="SuggestionHeading" xml:space="preserve">
+    <value>Предложить выражение</value>
+  </data>
+  <data name="SuggestionExpressionDesctiption" xml:space="preserve">
+    <value>Какое выражение предложить?</value>
+  </data>
+  <data name="SuggestionCategoryDesctiption" xml:space="preserve">
+    <value>Выберите категорию.</value>
+  </data>
+  <data name="Translation" xml:space="preserve">
+    <value>Перевод</value>
+  </data>
+  <data name="SuggestionTranslationDesctiption" xml:space="preserve">
+    <value>Как переводится выражение?</value>
   </data>
 </root>

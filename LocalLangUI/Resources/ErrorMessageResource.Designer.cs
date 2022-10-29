@@ -70,7 +70,7 @@ namespace LocalLangUI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ты далбаеб? Сказано же, выберите категорию.
+        ///   Looks up a localized string similar to Ты далбаеб? Сказано же, выберите категорию, блять.
         /// </summary>
         public static string CategoryRequiredError {
             get {

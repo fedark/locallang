@@ -13,38 +13,38 @@
         </div>
         @if (categories_ is not null)
         {
-    <EditForm Model="newExpression_" OnValidSubmit="CreateExpression">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        <div class="input-section">
-            <label class="form-label input-label text-uppercase" for="expression-text">@LabelResource.Expression</label>
-            <div class="input-description">@LabelResource.SuggestionExpressionDesctiption</div>
-            <InputText class="form-control" id="expression-text" @bind-Value="newExpression_.Word" />
-        </div>
-        <div class="input-section">
-            <label class="form-label input-label text-uppercase" for="translation">@LabelResource.Translation</label>
-            <div class="input-description">@LabelResource.SuggestionTranslationDesctiption</div>
-            <InputTextArea class="form-control" id="translation" @bind-Value="newExpression_.Translation" />
-        </div>
-        <div class="input-section">
-            <label class="form-label input-label text-uppercase" for="category">@LabelResource.Category</label>
-            <div class="input-description">@LabelResource.SuggestionCategoryDesctiption</div>
-            <div class="col-lg-8">
-                <CustomInputRadioGroup id="category" @bind-Value="newExpression_.Category">
-                    @foreach (var c in categories_)
-                        {
-                        <div class="radio-item-group">
-                            <InputRadio Value="@c.Id" id="@c.Id" />
-                            <label for="@c.Id">@c.Name</label>
-                        </div>
-                        }
-                </CustomInputRadioGroup>
-            </div>
-        </div>
-        <div class="center-children">
-            <button class="btn btn-main btn-lg text-uppercase" type="submit">@LabelResource.SuggestButton</button>
-        </div>
-    </EditForm>
+            <EditForm Model="newExpression_" OnValidSubmit="CreateExpression">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="input-section">
+                    <label class="form-label input-label text-uppercase" for="expression-text">@LabelResource.Expression</label>
+                    <div class="input-description">@LabelResource.SuggestionExpressionDesctiption</div>
+                    <InputText class="form-control" id="expression-text" @bind-Value="newExpression_.Word" />
+                </div>
+                <div class="input-section">
+                    <label class="form-label input-label text-uppercase" for="translation">@LabelResource.Translation</label>
+                    <div class="input-description">@LabelResource.SuggestionTranslationDesctiption</div>
+                    <InputTextArea class="form-control" id="translation" @bind-Value="newExpression_.Translation" />
+                </div>
+                <div class="input-section">
+                    <label class="form-label input-label text-uppercase" for="category">@LabelResource.Category</label>
+                    <div class="input-description">@LabelResource.SuggestionCategoryDesctiption</div>
+                    <div class="col-lg-8">
+                        <CustomInputRadioGroup id="category" @bind-Value="newExpression_.Category">
+                            @foreach (var c in categories_)
+                                {
+                                <div class="radio-item-group">
+                                    <InputRadio Value="@c.Id" id="@c.Id" />
+                                    <label for="@c.Id">@c.Name</label>
+                                </div>
+                                }
+                        </CustomInputRadioGroup>
+                    </div>
+                </div>
+                <div class="center-children">
+                    <button class="btn btn-main btn-lg text-uppercase" type="submit">@LabelResource.SuggestButton</button>
+                </div>
+            </EditForm>
         }
     </div>
 </div>

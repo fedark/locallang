@@ -79,6 +79,15 @@ namespace LocalLangUI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Детали.
+        /// </summary>
+        public static string DetailsHeading {
+            get {
+                return ResourceManager.GetString("DetailsHeading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Выражение.
         /// </summary>
         public static string Expression {

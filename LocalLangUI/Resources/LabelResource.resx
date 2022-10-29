@@ -174,4 +174,7 @@
   <data name="SuggestionTranslationDesctiption" xml:space="preserve">
     <value>Как переводится выражение?</value>
   </data>
+  <data name="DetailsHeading" xml:space="preserve">
+    <value>Детали</value>
+  </data>
 </root>

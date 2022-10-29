@@ -3,30 +3,32 @@
 @inject IExpressionCollection dbExpressions
 @inject NavigationManager navManager
 
-<h1>Expression Details</h1>
+<h1 class="page-heading text-uppercase mb-4">@LabelResource.DetailsHeading</h1>
 
-<div>
-    <div>
+<div class="row justify-content-center detail-form">
+    <div class="col-xl-8 col-lg-10 form-layout">
         @if (expression_ is not null)
         {
-            <div>
-                <div>
+            <div class="row expression-detail-row">
+                <div class="col-11 expression-detail">
                     <div>
-                        <div>@GetLikeTopText()</div>
-                        <span class="oi oi-caret-top"></span>
-                        <div>@GetLikeBottomText()</div>
+                        <div class="@GetLikeClass()" @onclick="Like">
+                            <div class="text-uppercase">@GetLikeTopText()</div>
+                            <span class="oi oi-caret-top expression-detail-like"></span>
+                            <div class="text-uppercase">@GetLikeBottomText()</div>
+                        </div>
+                        <div class="expression-detail-date">
+                            <div>@expression_.DateCreated.ToString(ConfigurationExtensions.DateFormat)</div>
+                        </div>
                     </div>
-                    <div>
-                        <div>@expression_.DateCreated.ToString(ConfigurationExtensions.DateFormat)</div>
+                    <div class="expression-detail-text">
+                        <div class="mb-2 expression-detail-word">@expression_?.Word</div>
+                        <div class="mb-2">@expression_?.Translation</div>
+                        <div class="mb-2 expression-entry-text-category">@expression_?.Category.Name</div>
                     </div>
                 </div>
-                <div>
-                    <div>@expression_?.Word</div>
-                    <div>@expression_?.Translation</div>
-                    <div>@expression_?.Category</div>
-                </div>
-                <div>
-                    <button @onclick="ClosePage"></button>
+                <div class="col-1">
+                    <button class="btn" @onclick="ClosePage">🗙</button>
                 </div>
             </div>
         }
@@ -50,13 +52,40 @@
         navManager.NavigateTo("/");
     }
 
+    private async Task Like()
+    {
+        if (expression_ is not null)
+        {
+            expression_.Likes++;
+            await dbExpressions.UpdateAsync(expression_);
+        }
+    }
+
     private string GetLikeTopText()
     {
-        return expression_?.Likes > 0 ? expression_.Likes.ToString("00") : "Click To";
+        return expression_?.Likes > 0 ? expression_.Likes.ToString() : LabelResource.LikeTopText;
     }
 
     private string GetLikeBottomText()
     {
-        return expression_?.Likes > 1 ? "Likes" : "Like";
+        if (expression_ is null || expression_.Likes < 1)
+        {
+            return string.Empty;
+        }
+
+        return (expression_.Likes % 100, expression_.Likes % 10) switch
+        {
+            (1, _) => LabelResource.LikeBottomText,
+            ( >= 2 and <= 4, _) => LabelResource.LikeBottomTextPlural2to4,
+            ( > 4 and <= 20, _) => LabelResource.LikeBottomTextPlural,
+            (_, 1) => LabelResource.LikeBottomText,
+            (_, >= 2 and <= 4) => LabelResource.LikeBottomTextPlural2to4,
+            _ => LabelResource.LikeBottomTextPlural,
+        };
+    }
+
+    private string GetLikeClass()
+    {
+        return expression_?.Likes > 0 ? "expression-detail-liked" : "expression-detail-no-likes";
     }
 }

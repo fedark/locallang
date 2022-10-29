@@ -14,38 +14,38 @@
         </div>
         @if (categories_ is not null)
         {
-            <EditForm Model="newExpression_" OnValidSubmit="CreateExpression">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                <div class="input-section">
-                    <label class="form-label input-label text-uppercase" for="expression-text">@localization.Expression</label>
-                    <div class="input-description">@localization.SuggestionExpressionDesctiption</div>
-                    <InputText class="form-control" id="expression-text" @bind-Value="newExpression_.Word" />
-                </div>
-                <div class="input-section">
-                    <label class="form-label input-label text-uppercase" for="category">@localization.Category</label>
-                    <div class="input-description">@localization.SuggestionCategoryDesctiption</div>
-                    <div class="col-lg-8">
-                        <CustomInputRadioGroup id="category" @bind-Value="newExpression_.Category">
-                            @foreach (var c in categories_)
-                            {
-                                <div class="radio-item-group">
-                                    <InputRadio Value="@c.Id" id="@c.Id" />
-                                    <label for="@c.Id">@c.Name</label>
-                                </div>
-                            }
-                        </CustomInputRadioGroup>
-                    </div>
-                </div>
-                <div class="input-section">
-                    <label class="form-label input-label text-uppercase" for="translation">@localization.Translation</label>
-                    <div class="input-description">@localization.SuggestionTranslationDesctiption</div>
-                    <InputTextArea class="form-control" id="translation" @bind-Value="newExpression_.Translation" />
-                </div>
-                <div class="center-children">
-                    <button class="btn btn-main btn-lg text-uppercase" type="submit">@localization.SuggestButton</button>
-                </div>
-            </EditForm>
+    <EditForm Model="newExpression_" OnValidSubmit="CreateExpression">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="input-section">
+            <label class="form-label input-label text-uppercase" for="expression-text">@localization.Expression</label>
+            <div class="input-description">@localization.SuggestionExpressionDesctiption</div>
+            <InputText class="form-control" id="expression-text" @bind-Value="newExpression_.Word" />
+        </div>
+        <div class="input-section">
+            <label class="form-label input-label text-uppercase" for="translation">@localization.Translation</label>
+            <div class="input-description">@localization.SuggestionTranslationDesctiption</div>
+            <InputTextArea class="form-control" id="translation" @bind-Value="newExpression_.Translation" />
+        </div>
+        <div class="input-section">
+            <label class="form-label input-label text-uppercase" for="category">@localization.Category</label>
+            <div class="input-description">@localization.SuggestionCategoryDesctiption</div>
+            <div class="col-lg-8">
+                <CustomInputRadioGroup id="category" @bind-Value="newExpression_.Category">
+                    @foreach (var c in categories_)
+                        {
+                        <div class="radio-item-group">
+                            <InputRadio Value="@c.Id" id="@c.Id" />
+                            <label for="@c.Id">@c.Name</label>
+                        </div>
+                        }
+                </CustomInputRadioGroup>
+            </div>
+        </div>
+        <div class="center-children">
+            <button class="btn btn-main btn-lg text-uppercase" type="submit">@localization.SuggestButton</button>
+        </div>
+    </EditForm>
         }
     </div>
 </div>

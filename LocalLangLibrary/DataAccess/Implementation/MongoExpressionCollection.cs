@@ -25,16 +25,8 @@ namespace LocalLangLibrary.DataAccess
 
 		public async Task<IList<Expression>?> GetAllAsync()
 		{
-			var result = cache_.Get<IList<Expression>?>(CacheName);
-			if (result is null)
-			{
-				var allExpressions = await expressions_.FindAsync(e => e.Status == Status.Approved);
-				result = await allExpressions.ToListAsync();
-
-				cache_.Set(CacheName, result, TimeSpan.FromMinutes(1));
-			}
-
-			return result;
+			var result = await GetNotRejectedAsync();
+			return result?.Where(e => e.Status == Status.Approved).ToList();
 		}
 
 		public async Task<Expression?> GetAsync(string id)
@@ -56,7 +48,7 @@ namespace LocalLangLibrary.DataAccess
 
 		public async Task<IList<Expression>?> GetPendingAsync()
 		{
-			var result = await GetAllAsync();
+			var result = await GetNotRejectedAsync();
 			return result?.Where(e => e.Status == Status.Pending).ToList();
 		}
 
@@ -71,6 +63,20 @@ namespace LocalLangLibrary.DataAccess
 			}
 
 			//TODO: log
+		}
+
+		private async Task<IList<Expression>?> GetNotRejectedAsync()
+		{
+			var result = cache_.Get<IList<Expression>?>(CacheName);
+			if (result is null)
+			{
+				var allExpressions = await expressions_.FindAsync(e => e.Status != Status.Rejected);
+				result = await allExpressions.ToListAsync();
+
+				cache_.Set(CacheName, result, TimeSpan.FromMinutes(1));
+			}
+
+			return result;
 		}
 	}
 }

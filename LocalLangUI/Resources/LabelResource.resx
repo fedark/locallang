@@ -177,4 +177,25 @@
   <data name="DetailsHeading" xml:space="preserve">
     <value>Детали</value>
   </data>
+  <data name="AdminHeading" xml:space="preserve">
+    <value>Ожидающие предложения</value>
+  </data>
+  <data name="ApproveButtoon" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="ExpressionPlural2to4" xml:space="preserve">
+    <value>Выражения</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Отказать</value>
+  </data>
+  <data name="Submission" xml:space="preserve">
+    <value>Предложение</value>
+  </data>
+  <data name="SubmissionPlural" xml:space="preserve">
+    <value>Предложений</value>
+  </data>
+  <data name="SubmissionPlural2to4" xml:space="preserve">
+    <value>Предложения</value>
+  </data>
 </root>

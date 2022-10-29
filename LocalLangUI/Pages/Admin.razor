@@ -1,14 +1,14 @@
-﻿@page "/Admin"
+﻿@page "/AdminPedar"
 
 @inject IExpressionCollection dbExpressions
 @inject NavigationManager navManager
 
-<h1>Pending Submissions</h1>
+<h1 class="page-heading text-uppercase mb-4">@LabelResource.AdminHeading</h1>
 
-<div>
-    <div>@submissions_?.Count Submissions</div>
-    <div>
-        <button @onclick="ClosePage"></button>
+<div class="row">
+    <div class="expression-count col-8 mt-2">@submissions_?.Count @GetSubmissionCountText()</div>
+    <div class="col-4 close-button-section">
+        <button class="btn" @onclick="ClosePage">🗙</button>
     </div>
 </div>
 
@@ -16,52 +16,54 @@
 {
     @foreach (var e in submissions_)
     {
-        <div>
-            <div>
-                <button @onclick="() => Approve(e)">Approve</button>
-                <button @onclick="() => Reject(e)">Reject</button>
+        <div class="row submission">
+            <div class="col-lg-2 col-md-3 col-sm-4">
+                <button class="btn btn-approve" @onclick="() => Approve(e)">@LabelResource.ApproveButtoon</button>
+                <button class="btn btn-reject" @onclick="() => Reject(e)">@LabelResource.RejectButton</button>
             </div>
-            <div>
+            <div class="col-lg-10 col-md-9 col-sm-8">
                 <div>
-                    @if (editedExpressionId_ == e.Id)
+                    @if (editedExpressionId_ == e.Id && isWordEdited_)
                     {
-                        <EditForm Model="@editedWord_" OnSubmit="() => Save(e)">
-                            <InputText @bind-Value="editedWord_" />
-                            <button type="submit">
-                                <span class="oi oi-check"></span>
+                        <EditForm class="approval-edit-form" Model="@editedWord_" OnSubmit="() => Save(e)">
+                            <InputText class="form-control approval-edit-field" @bind-Value="editedWord_" />
+                            <button class="btn" type="submit">
+                                <span class="oi oi-check submission-edit-approve"></span>
                             </button>
-                            <button @onclick="Cancel">
-                                <span class="oi oi-x"></span>
+                            <button class="btn" type="button" @onclick="Cancel">
+                                <span class="oi oi-x submission-edit-reject"></span>
                             </button>
                         </EditForm>
                     }
                     else
                     {
                         @e.Word
-                        <span class="oi oi-pencil" @onclick="() => EditWord(e)"></span>
+                        <span class="oi oi-pencil submission-edit-icon" @onclick="() => EditWord(e)"></span>
                     }
                 </div>
-            </div>
-            <div>@e.Category.Name</div>
-            <div>
                 <div>
-                    @if (editedExpressionId_ == e.Id)
-                    {
-                        <EditForm Model="@editedTranslation_" OnSubmit="(() => Save(e))">
-                            <InputText @bind-Value="editedTranslation_" />
-                            <button type="submit">
-                                <span class="oi oi-check"></span>
-                            </button>
-                            <button @onclick="() => editedExpressionId_ = string.Empty">
-                                <span class="oi oi-x"></span>
-                            </button>
-                        </EditForm>
-                    }
-                    else
-                    {
-                        @e.Translation
-                        <span class="oi oi-pencil" @onclick="() => EditTranslation(e)"></span>
-                    }
+                    <div>
+                        @if (editedExpressionId_ == e.Id && isTranslationEdited_)
+                        {
+                            <EditForm class="approval-edit-form" Model="@editedTranslation_" OnSubmit="(() => Save(e))">
+                                <InputText class="form-control approval-edit-field" @bind-Value="editedTranslation_" />
+                                <button class="btn" type="submit">
+                                    <span class="oi oi-check submission-edit-approve"></span>
+                                </button>
+                                <button class="btn" type="button" @onclick="Cancel">
+                                    <span class="oi oi-x submission-edit-reject"></span>
+                                </button>
+                            </EditForm>
+                        }
+                        else
+                        {
+                            @e.Translation
+                            <span class="oi oi-pencil submission-edit-icon" @onclick="() => EditTranslation(e)"></span>
+                        }
+                    </div>
+                </div>
+                <div>
+                    @e.Category.Name
                 </div>
             </div>
         </div>
@@ -140,5 +142,20 @@
     private void Cancel()
     {
         editedExpressionId_ = string.Empty;
+    }
+
+    private string GetSubmissionCountText()
+    {
+        var count = submissions_?.Count ?? 0;
+
+        return (count % 100, count % 10) switch
+        {
+            (1, _) => LabelResource.Submission,
+            ( >= 2 and <= 4, _) => LabelResource.SubmissionPlural2to4,
+            ( > 4 and <= 20, _) => LabelResource.SubmissionPlural,
+            (_, 1) => LabelResource.Submission,
+            (_, >= 2 and <= 4) => LabelResource.SubmissionPlural2to4,
+            _ => LabelResource.SubmissionPlural,
+        };
     }
 }

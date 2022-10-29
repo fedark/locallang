@@ -8,7 +8,7 @@
 <h1 class="page-heading text-uppercase mb-4">@LabelResource.PageHeading</h1>
 
 <div class="suggest-container">
-    <button @onclick="OpenCreate" class="suggest-btn btn btn-outline-dark btn-lg text-uppercase">@LabelResource.SuggestButton</button>
+    <button @onclick="OpenCreate" class="suggest-btn btn btn-outline-dark btn-lg text-uppercase">@GetExpressionCountText()</button>
 </div>
 
 <div class="row">
@@ -202,6 +202,21 @@
             (_, 1) => LabelResource.LikeBottomText,
             (_, >= 2 and <= 4) => LabelResource.LikeBottomTextPlural2to4,
             _ => LabelResource.LikeBottomTextPlural,
+        };
+    }
+
+    private string GetExpressionCountText()
+    {
+        var count = expressions_?.Count ?? 0;
+
+        return (count % 100, count % 10) switch
+        {
+            (1, _) => LabelResource.Expression,
+            ( >= 2 and <= 4, _) => LabelResource.ExpressionPlural2to4,
+            ( > 4 and <= 20, _) => LabelResource.ExpressionPlural,
+            (_, 1) => LabelResource.Expression,
+            (_, >= 2 and <= 4) => LabelResource.ExpressionPlural2to4,
+            _ => LabelResource.ExpressionPlural,
         };
     }
 

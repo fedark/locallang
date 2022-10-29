@@ -61,6 +61,24 @@ namespace LocalLangUI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ожидающие предложения.
+        /// </summary>
+        public static string AdminHeading {
+            get {
+                return ResourceManager.GetString("AdminHeading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Добавить.
+        /// </summary>
+        public static string ApproveButtoon {
+            get {
+                return ResourceManager.GetString("ApproveButtoon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Категория.
         /// </summary>
         public static string Category {
@@ -102,6 +120,15 @@ namespace LocalLangUI.Resources {
         public static string ExpressionPlural {
             get {
                 return ResourceManager.GetString("ExpressionPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Выражения.
+        /// </summary>
+        public static string ExpressionPlural2to4 {
+            get {
+                return ResourceManager.GetString("ExpressionPlural2to4", resourceCulture);
             }
         }
         
@@ -151,6 +178,15 @@ namespace LocalLangUI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Отказать.
+        /// </summary>
+        public static string RejectButton {
+            get {
+                return ResourceManager.GetString("RejectButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Поиск.
         /// </summary>
         public static string SearchPlaceholder {
@@ -183,6 +219,33 @@ namespace LocalLangUI.Resources {
         public static string SortPopular {
             get {
                 return ResourceManager.GetString("SortPopular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Предложение.
+        /// </summary>
+        public static string Submission {
+            get {
+                return ResourceManager.GetString("Submission", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Предложений.
+        /// </summary>
+        public static string SubmissionPlural {
+            get {
+                return ResourceManager.GetString("SubmissionPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Предложения.
+        /// </summary>
+        public static string SubmissionPlural2to4 {
+            get {
+                return ResourceManager.GetString("SubmissionPlural2to4", resourceCulture);
             }
         }
         

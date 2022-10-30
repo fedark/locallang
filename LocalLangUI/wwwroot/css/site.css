@@ -350,6 +350,7 @@ form-control:focus {
     justify-content: center;
     font-size: 0.8rem;
     color: white;
+    cursor: pointer;
 }
 
 .expression-detail-no-likes {

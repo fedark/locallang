@@ -1,5 +1,6 @@
 ﻿using LocalLangLibrary.Models;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -10,14 +11,14 @@ namespace LocalLangLibrary.DataAccess
 	public class MongoCategoryCollection : ICategoryCollection
 	{
 		private const string CacheName = "CategoryData";
+		private readonly ILogger<MongoCategoryCollection> logger_;
 		private readonly IMemoryCache cache_;
-
-		private Category? defaultCategory_;
 		private readonly IMongoCollection<Category> categories_;
 
-		public MongoCategoryCollection(IDbConnection db, IMemoryCache cache)
+		public MongoCategoryCollection(IDbConnection db, ILogger<MongoCategoryCollection> logger, IMemoryCache cache)
 		{
 			categories_ = db.CategoryCollection;
+			logger_ = logger;
 			cache_ = cache;
 		}
 

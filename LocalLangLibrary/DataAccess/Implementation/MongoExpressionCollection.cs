@@ -1,5 +1,6 @@
 ﻿using LocalLangLibrary.Models;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,13 @@ namespace LocalLangLibrary.DataAccess
 		private readonly IMemoryCache cache_;
 
 		private readonly IDbConnection dbConnection_;
+		private readonly ILogger<MongoCategoryCollection> logger_;
 		private readonly IMongoCollection<Expression> expressions_;
 
-		public MongoExpressionCollection(IDbConnection dbConnection, IMemoryCache cache)
+		public MongoExpressionCollection(IDbConnection dbConnection, ILogger<MongoCategoryCollection> logger, IMemoryCache cache)
 		{
 			dbConnection_ = dbConnection;
+			logger_ = logger;
 			cache_ = cache;
 			expressions_ = dbConnection_.ExpressionCollection;
 		}
@@ -36,9 +39,9 @@ namespace LocalLangLibrary.DataAccess
 				var result = await expressions_.FindAsync(e => e.Id == id);
 				return result.FirstOrDefault();
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
-				// log
+				logger_.LogError($"Failed to get expression from DB: {e.Message}.");
 				return null;
 			}
 		}
@@ -60,17 +63,10 @@ namespace LocalLangLibrary.DataAccess
 			return result?.Where(e => e.Status == Status.Pending).ToList();
 		}
 
-		public async Task LikeAsync(string id)
+		public async Task LikeAsync(Expression expression)
 		{
-			var expression = await GetAsync(id);
-			if (expression is not null)
-			{
-				expression.Likes++;
-				await expressions_.ReplaceOneAsync(e => e.Id == id, expression);
-				cache_.Remove(CacheName);
-			}
-
-			//TODO: log
+			expression.Likes++;
+			await UpdateAsync(expression);
 		}
 
 		private async Task<IList<Expression>?> GetNotRejectedAsync()

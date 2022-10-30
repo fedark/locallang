@@ -7,6 +7,6 @@ namespace LocalLangLibrary.DataAccess
 	public interface IExpressionCollection : IDbCollection<Expression>
 	{
 		Task<IList<Expression>?> GetPendingAsync();
-		Task LikeAsync(string id);
+		Task LikeAsync(Expression expression);
 	}
 }

@@ -119,8 +119,7 @@ namespace LocalLangUI.Pages
 
         private async Task Like(Expression expression)
         {
-            expression.Likes++;
-            await dbExpressions.UpdateAsync(expression);
+            await dbExpressions.LikeAsync(expression);
             await FilterExpressions();
         }
 

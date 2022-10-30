@@ -29,8 +29,7 @@ namespace LocalLangUI.Pages
         {
             if (expression_ is not null)
             {
-                expression_.Likes++;
-                await dbExpressions.UpdateAsync(expression_);
+                await dbExpressions.LikeAsync(expression_);
             }
         }
 

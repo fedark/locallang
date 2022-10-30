@@ -97,6 +97,15 @@ namespace LocalLangUI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Рукожоп, блять, нет такой страницы!.
+        /// </summary>
+        public static string PageNotFoundError {
+            get {
+                return ResourceManager.GetString("PageNotFoundError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Слишком длинный перевод.
         /// </summary>
         public static string TranslationInvalidError {

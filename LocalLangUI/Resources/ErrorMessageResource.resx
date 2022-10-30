@@ -129,6 +129,9 @@
   <data name="ExpressionRequiredError" xml:space="preserve">
     <value>Укажите выражение</value>
   </data>
+  <data name="PageNotFoundError" xml:space="preserve">
+    <value>Рукожоп, блять, нет такой страницы!</value>
+  </data>
   <data name="TranslationInvalidError" xml:space="preserve">
     <value>Слишком длинный перевод</value>
   </data>

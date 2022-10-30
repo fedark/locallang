@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LocalLangUI.Resources;
 using LocalLangLibrary.Models;
+using LocalLangUI.Helpers;
 
 namespace LocalLangUI.Pages
 {
@@ -138,29 +139,13 @@ namespace LocalLangUI.Pages
                 return string.Empty;
             }
 
-            return (expression.Likes % 100, expression.Likes % 10) switch
-            {
-                (1, _) => LabelResource.LikeBottomText,
-                ( >= 2 and <= 4, _) => LabelResource.LikeBottomTextPlural2to4,
-                ( > 4 and <= 20, _) => LabelResource.LikeBottomTextPlural,
-                (_, 1) => LabelResource.LikeBottomText,
-                (_, >= 2 and <= 4) => LabelResource.LikeBottomTextPlural2to4,
-                _ => LabelResource.LikeBottomTextPlural,
-            };
+            return PluralHelper.GetCountedText(expression.Likes, LabelResource.LikeBottomText, LabelResource.LikeBottomTextPlural2to4, LabelResource.LikeBottomTextPlural);
         }
 
         private string GetExpressionCountText()
         {
             var count = expressions_?.Count ?? 0;
-            return (count % 100, count % 10) switch
-            {
-                (1, _) => LabelResource.Expression,
-                ( >= 2 and <= 4, _) => LabelResource.ExpressionPlural2to4,
-                ( > 4 and <= 20, _) => LabelResource.ExpressionPlural,
-                (_, 1) => LabelResource.Expression,
-                (_, >= 2 and <= 4) => LabelResource.ExpressionPlural2to4,
-                _ => LabelResource.ExpressionPlural,
-            };
+            return PluralHelper.GetCountedText(count, LabelResource.Expression, LabelResource.ExpressionPlural2to4, LabelResource.ExpressionPlural);
         }
 
         private string GetSortClass(bool isSelected)

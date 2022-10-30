@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using System.Diagnostics.CodeAnalysis;
 using LocalLangUI.Resources;
 using LocalLangLibrary.Models;
+using LocalLangUI.Helpers;
 
 namespace LocalLangUI.Pages
 {
@@ -45,15 +46,7 @@ namespace LocalLangUI.Pages
                 return string.Empty;
             }
 
-            return (expression_.Likes % 100, expression_.Likes % 10) switch
-            {
-                (1, _) => LabelResource.LikeBottomText,
-                ( >= 2 and <= 4, _) => LabelResource.LikeBottomTextPlural2to4,
-                ( > 4 and <= 20, _) => LabelResource.LikeBottomTextPlural,
-                (_, 1) => LabelResource.LikeBottomText,
-                (_, >= 2 and <= 4) => LabelResource.LikeBottomTextPlural2to4,
-                _ => LabelResource.LikeBottomTextPlural,
-            };
+            return PluralHelper.GetCountedText(expression_.Likes, LabelResource.LikeBottomText, LabelResource.LikeBottomTextPlural2to4, LabelResource.LikeBottomTextPlural);
         }
 
         private string GetLikeClass()

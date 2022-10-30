@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using LocalLangUI.Resources;
 using LocalLangLibrary.Models;
+using LocalLangUI.Helpers;
 
 namespace LocalLangUI.Pages
 {
@@ -80,15 +81,7 @@ namespace LocalLangUI.Pages
         private string GetSubmissionCountText()
         {
             var count = submissions_?.Count ?? 0;
-            return (count % 100, count % 10) switch
-            {
-                (1, _) => LabelResource.Submission,
-                ( >= 2 and <= 4, _) => LabelResource.SubmissionPlural2to4,
-                ( > 4 and <= 20, _) => LabelResource.SubmissionPlural,
-                (_, 1) => LabelResource.Submission,
-                (_, >= 2 and <= 4) => LabelResource.SubmissionPlural2to4,
-                _ => LabelResource.SubmissionPlural,
-            };
+            return PluralHelper.GetCountedText(count, LabelResource.Submission, LabelResource.SubmissionPlural2to4, LabelResource.SubmissionPlural);
         }
     }
 }

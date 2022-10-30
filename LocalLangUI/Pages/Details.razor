@@ -7,10 +7,13 @@
 
 <div class="row justify-content-center">
     <div class="col-xl-8 col-lg-10 form-layout detail-form-layout">
+        <div class="close-button-section">
+            <button class="btn" @onclick="ClosePage">🗙</button>
+        </div>
         @if (expression_ is not null)
         {
             <div class="row expression-detail-row">
-                <div class="col-11 expression-detail">
+                <div class="expression-detail">
                     <div>
                         <div class="@GetLikeClass()" @onclick="Like">
                             <div class="text-uppercase">@GetLikeTopText()</div>
@@ -26,9 +29,6 @@
                         <div class="mb-2 d-none d-md-block">@expression_?.Translation</div>
                         <div class="mb-2 expression-entry-text-category d-none d-md-block">@expression_?.Category.Name</div>
                     </div>
-                </div>
-                <div class="col-1">
-                    <button class="btn" @onclick="ClosePage">🗙</button>
                 </div>
             </div>
             <div class="row d-block d-md-none">

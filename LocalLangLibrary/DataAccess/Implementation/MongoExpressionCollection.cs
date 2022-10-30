@@ -31,8 +31,16 @@ namespace LocalLangLibrary.DataAccess
 
 		public async Task<Expression?> GetAsync(string id)
 		{
-			var result = await expressions_.FindAsync(e => e.Id == id);
-			return result.FirstOrDefault();
+			try
+			{
+				var result = await expressions_.FindAsync(e => e.Id == id);
+				return result.FirstOrDefault();
+			}
+			catch (Exception)
+			{
+				// log
+				return null;
+			}
 		}
 
 		public Task Create(Expression expression)

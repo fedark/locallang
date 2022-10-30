@@ -121,6 +121,7 @@ namespace LocalLangUI.Pages
         {
             expression.Likes++;
             await dbExpressions.UpdateAsync(expression);
+            await FilterExpressions();
         }
 
         #endregion

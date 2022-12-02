@@ -23,7 +23,7 @@ namespace LocalLangUI.Pages
         private async Task CreateExpression()
         {
             var category = await dbCategories.GetAsync(newExpression_.Category);
-            var expression = new Expression(newExpression_.Word, newExpression_.Translation, category);
+            var expression = new Expression(newExpression_.Word, newExpression_.Translation, category!);
             await dbExpressions.Create(expression);
             newExpression_ = new();
             ClosePage();

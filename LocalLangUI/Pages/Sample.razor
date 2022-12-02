@@ -159,9 +159,7 @@ else
 
         foreach (var (word, transaltion, categoryName) in exprerssionSample)
         {
-#nullable disable
-            var category = categories.Where(c => c.Name == categoryName).Single();
-#nullable restore
+            var category = categories!.Where(c => c.Name == categoryName).Single();
             var expression = new Expression(word, transaltion, category);
             expression.Status = Status.Approved;
             await dbExpressions.Create(expression);

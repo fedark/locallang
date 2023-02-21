@@ -3,6 +3,8 @@ WORKDIR /locallang
 
 COPY ./LocalLangLibrary/*.csproj ./LocalLangLibrary/
 COPY ./LocalLangUI/*.csproj ./LocalLangUI/
+COPY ./nuget.config ./
+COPY ./nuget/. ./nuget/
 RUN dotnet restore ./LocalLangUI/LocalLangUI.csproj
 
 COPY ./LocalLangLibrary/. ./LocalLangLibrary/

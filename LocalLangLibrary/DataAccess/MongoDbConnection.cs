@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using LocalLangLibrary.Models;
-using MongoDbAccess.DataAccess.Abstractions;
 using Microsoft.Extensions.Configuration;
+using MongoDbAccess.DataAccess.Abstractions;
 
 namespace LocalLangLibrary.DataAccess
 {

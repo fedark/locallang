@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using MongoDbAccess.DataAccess.Abstractions;
 
 namespace LocalLangUI
@@ -20,6 +21,13 @@ namespace LocalLangUI
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddLogging(builder =>
+			{
+				builder.AddConfiguration(Configuration.GetRequiredSection("Logging"));
+				builder.AddConsole();
+				builder.AddDebug();
+			});
+
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
 			services.AddMemoryCache();

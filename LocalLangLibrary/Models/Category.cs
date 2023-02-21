@@ -1,10 +1,13 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDbAccess;
+using MongoDbAccess.Models;
 using System.Diagnostics.CodeAnalysis;
 
 namespace LocalLangLibrary.Models
 {
-    public class Category
+    [CachedCollection(1440)]
+    public class Category : IModel
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

@@ -48,7 +48,7 @@ else
         foreach (var name in categorySample)
         {
             var category = new Category(name);
-            await dbCategories.Create(category);
+            await dbCategories.CreateAsync(category);
         }
 
         categoriesCreated_ = true;
@@ -162,7 +162,7 @@ else
             var category = categories!.Where(c => c.Name == categoryName).Single();
             var expression = new Expression(word, transaltion, category);
             expression.Status = Status.Approved;
-            await dbExpressions.Create(expression);
+            await dbExpressions.CreateAsync(expression);
         }
     }
 }

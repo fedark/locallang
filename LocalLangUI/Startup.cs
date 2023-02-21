@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MongoDbAccess.DataAccess.Abstractions;
+using LocalLangLibrary.Models;
 
 namespace LocalLangUI
 {
@@ -22,7 +24,7 @@ namespace LocalLangUI
             services.AddServerSideBlazor();
             services.AddMemoryCache();
 
-            services.AddSingleton<IDbConnection, DbConnection>();
+            services.AddSingleton<IDbConnection, MongoDbConnection>();
             services.AddSingleton<ICategoryCollection, MongoCategoryCollection>();
             services.AddSingleton<IExpressionCollection, MongoExpressionCollection>();
         }

@@ -24,7 +24,7 @@ namespace LocalLangUI.Pages
         {
             var category = await dbCategories.GetAsync(newExpression_.Category);
             var expression = new Expression(newExpression_.Word, newExpression_.Translation, category!);
-            await dbExpressions.Create(expression);
+            await dbExpressions.CreateAsync(expression);
             newExpression_ = new();
             ClosePage();
         }

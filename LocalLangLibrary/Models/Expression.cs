@@ -1,11 +1,18 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDbAccess;
+using MongoDbAccess.DataAccess.Abstractions;
+using MongoDbAccess.Models;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LocalLangLibrary.Models
 {
-	public class Expression
+    [CachedCollection(1)]
+	public class Expression : IModel
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

@@ -72,7 +72,7 @@ namespace LocalLangUI.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Добавить.
         /// </summary>
-        public static string ApproveButtoon {
+        public static string ApproveButton {
             get {
                 return ResourceManager.GetString("ApproveButtoon", resourceCulture);
             }

@@ -27,14 +27,14 @@ namespace LocalLangUI.Pages
             navManager.NavigateTo("/");
         }
 
-        private async Task Approve(Expression submission)
+        private async Task ApproveAsync(Expression submission)
         {
             submission.Status = Status.Approved;
             submissions_?.Remove(submission);
             await dbExpressions.UpdateAsync(submission);
         }
 
-        private async Task Reject(Expression submission)
+        private async Task RejectAsync(Expression submission)
         {
             submission.Status = Status.Rejected;
             submissions_?.Remove(submission);
@@ -57,7 +57,7 @@ namespace LocalLangUI.Pages
             editedTranslation_ = expression.Translation;
         }
 
-        private async Task Save(Expression expression)
+        private async Task SaveAsync(Expression expression)
         {
             if (isWordEdited_)
             {

@@ -29,13 +29,13 @@ namespace LocalLangUI.Pages
         {
             if (firstRender)
             {
-                await LoadFilterState();
-                await FilterExpressions();
+                await LoadFilterStateAsync();
+                await FilterExpressionsAsync();
                 StateHasChanged();
             }
         }
 
-        private async Task LoadFilterState()
+        private async Task LoadFilterStateAsync()
         {
             var stringResults = await sessionStorage.GetAsync<string>(nameof(category_));
             category_ = stringResults.Success && stringResults.Value is not null ? stringResults.Value : LabelResource.CategoryAll;
@@ -47,7 +47,7 @@ namespace LocalLangUI.Pages
             sortType_ = sortResults.Success ? sortResults.Value : SortType.Alphabet;
         }
 
-        private async Task FilterExpressions()
+        private async Task FilterExpressionsAsync()
         {
             IEnumerable<Expression>? result = await dbExpressions.GetAllAsync();
             if (category_ != LabelResource.CategoryAll)
@@ -70,10 +70,10 @@ namespace LocalLangUI.Pages
             };
 
             expressions_ = result?.ToList();
-            await SaveFilterState();
+            await SaveFilterStateAsync();
         }
 
-        private async Task SaveFilterState()
+        private async Task SaveFilterStateAsync()
         {
             await sessionStorage.SetAsync(nameof(category_), category_);
             await sessionStorage.SetAsync(nameof(searchText_), searchText_ ?? string.Empty);
@@ -98,29 +98,29 @@ namespace LocalLangUI.Pages
 
         #region Events
 
-        private async Task OnSort(SortType sorting)
+        private async Task OnSortAsync(SortType sorting)
         {
             sortType_ = sorting;
-            await FilterExpressions();
+            await FilterExpressionsAsync();
         }
 
-        private async Task OnSearchInput(string? searchText)
+        private async Task OnSearchInputAsync(string? searchText)
         {
             searchText_ = searchText;
-            await FilterExpressions();
+            await FilterExpressionsAsync();
         }
 
-        private async Task OnCategoryClick(string category)
+        private async Task OnCategoryClickAsync(string category)
         {
             category_ = category;
             showCategories_ = false;
-            await FilterExpressions();
+            await FilterExpressionsAsync();
         }
 
-        private async Task Like(Expression expression)
+        private async Task LikeAsync(Expression expression)
         {
             await dbExpressions.LikeAsync(expression);
-            await FilterExpressions();
+            await FilterExpressionsAsync();
         }
 
         #endregion

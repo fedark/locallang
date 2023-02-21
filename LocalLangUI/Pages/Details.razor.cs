@@ -25,7 +25,7 @@ namespace LocalLangUI.Pages
             navManager.NavigateTo("/");
         }
 
-        private async Task Like()
+        private async Task LikeAsync()
         {
             if (expression_ is not null)
             {

@@ -20,7 +20,7 @@ namespace LocalLangUI.Pages
             navManager.NavigateTo("/");
         }
 
-        private async Task CreateExpression()
+        private async Task CreateExpressionAsync()
         {
             var category = await dbCategories.GetAsync(newExpression_.Category);
             var expression = new Expression(newExpression_.Word, newExpression_.Translation, category!);

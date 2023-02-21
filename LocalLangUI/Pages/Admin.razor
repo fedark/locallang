@@ -18,14 +18,14 @@
     {
         <div class="row submission">
             <div class="col-lg-2 col-md-3 col-sm-4">
-                <button class="btn btn-approve" @onclick="() => Approve(e)">@LabelResource.ApproveButton</button>
-                <button class="btn btn-reject" @onclick="() => Reject(e)">@LabelResource.RejectButton</button>
+                <button class="btn btn-approve" @onclick="() => ApproveAsync(e)">@LabelResource.ApproveButton</button>
+                <button class="btn btn-reject" @onclick="() => RejectAsync(e)">@LabelResource.RejectButton</button>
             </div>
             <div class="col-lg-10 col-md-9 col-sm-8">
                 <div>
                     @if (editedExpressionId_ == e.Id && isWordEdited_)
                     {
-                        <EditForm class="approval-edit-form" Model="@editedWord_" OnSubmit="() => Save(e)">
+                        <EditForm class="approval-edit-form" Model="@editedWord_" OnSubmit="() => SaveAsync(e)">
                             <InputText class="form-control approval-edit-field" @bind-Value="editedWord_" />
                             <button class="btn" type="submit">
                                 <span class="oi oi-check submission-edit-approve"></span>
@@ -45,7 +45,7 @@
                     <div>
                         @if (editedExpressionId_ == e.Id && isTranslationEdited_)
                         {
-                            <EditForm class="approval-edit-form" Model="@editedTranslation_" OnSubmit="(() => Save(e))">
+                            <EditForm class="approval-edit-form" Model="@editedTranslation_" OnSubmit="(() => SaveAsync(e))">
                                 <InputText class="form-control approval-edit-field" @bind-Value="editedTranslation_" />
                                 <button class="btn" type="submit">
                                     <span class="oi oi-check submission-edit-approve"></span>

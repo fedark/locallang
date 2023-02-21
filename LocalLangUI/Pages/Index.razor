@@ -14,25 +14,25 @@
 <div class="row">
     <div class="expression-count col-md-6 text-dark mt-2">@expressions_?.Count @GetExpressionCountText()</div>
     <div class="col-md-2 col-xl-3 btn-group">
-        <button class="btn btn-order @GetSortClass(sortType_ == SortType.Alphabet)" @onclick="() => OnSort(SortType.Alphabet)">@LabelResource.SortAlphabet</button>
-        <button class="btn btn-order @GetSortClass(sortType_ == SortType.New)" @onclick="() => OnSort(SortType.New)">@LabelResource.SortNew</button>
-        <button class="btn btn-order @GetSortClass(sortType_ == SortType.Popular)" @onclick="() => OnSort(SortType.Popular)">@LabelResource.SortPopular</button>
+        <button class="btn btn-order @GetSortClass(sortType_ == SortType.Alphabet)" @onclick="() => OnSortAsync(SortType.Alphabet)">@LabelResource.SortAlphabet</button>
+        <button class="btn btn-order @GetSortClass(sortType_ == SortType.New)" @onclick="() => OnSortAsync(SortType.New)">@LabelResource.SortNew</button>
+        <button class="btn btn-order @GetSortClass(sortType_ == SortType.Popular)" @onclick="() => OnSortAsync(SortType.Popular)">@LabelResource.SortPopular</button>
     </div>
     <div class="col-md-4 col-xl-3 search-box">
         <input type="text" placeholder=@LabelResource.SearchPlaceholder aria-label="Search box" class="form-control rounded-control" 
-               @oninput="(text) => OnSearchInput((string?)text.Value)" />
+               @oninput="(text) => OnSearchInputAsync((string?)text.Value)" />
     </div>
     <div class="col-12 d-block d-md-none">
         @if (categories_ is not null && showCategories_)
         {
         <div class="categories">
             <span class="text-uppercase category-bold">@LabelResource.Category</span>
-            <div class="@GetSelectedCategoryClass(LabelResource.CategoryAll)" @onclick="() => OnCategoryClick(LabelResource.CategoryAll)">@LabelResource.CategoryAll</div>
+            <div class="@GetSelectedCategoryClass(LabelResource.CategoryAll)" @onclick="() => OnCategoryClickAsync(LabelResource.CategoryAll)">@LabelResource.CategoryAll</div>
             @if (categories_ is not null)
             {
                 @foreach (var c in categories_)
                 {
-                    <div class="@GetSelectedCategoryClass(c.Name)" @onclick="() => OnCategoryClick(c.Name)">@c.Name</div>
+                    <div class="@GetSelectedCategoryClass(c.Name)" @onclick="() => OnCategoryClickAsync(c.Name)">@c.Name</div>
                 }
             }
         </div>
@@ -52,7 +52,7 @@
         {
             <Virtualize Items="@expressions_" Context="e" OverscanCount="10">
                 <div class="expression-entry">
-                    <div class="@GetLikeClass(e)" @onclick="() => Like(e)">
+                    <div class="@GetLikeClass(e)" @onclick="() => LikeAsync(e)">
                         <div class="text-uppercase">@GetLikeTopText(e)</div>
                         <span class="oi oi-caret-top expression-entry-like"></span>
                         <div class="text-uppercase">@GetLikeBottomText(e)</div>
@@ -72,12 +72,12 @@
     <div class="col-md-4 col-xl-3 d-none d-md-block">
         <div class="categories">
             <span class="text-uppercase category-bold">@LabelResource.Category</span>
-            <div class="@GetSelectedCategoryClass(LabelResource.CategoryAll)" @onclick="() => OnCategoryClick(LabelResource.CategoryAll)">@LabelResource.CategoryAll</div>
+            <div class="@GetSelectedCategoryClass(LabelResource.CategoryAll)" @onclick="() => OnCategoryClickAsync(LabelResource.CategoryAll)">@LabelResource.CategoryAll</div>
             @if (categories_ is not null)
             {
                 @foreach (var c in categories_)
                 {
-                    <div class="@GetSelectedCategoryClass(c.Name)" @onclick="() => OnCategoryClick(c.Name)">@c.Name</div>
+                    <div class="@GetSelectedCategoryClass(c.Name)" @onclick="() => OnCategoryClickAsync(c.Name)">@c.Name</div>
                 }
             }
         </div>

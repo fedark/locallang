@@ -1,27 +1,30 @@
-﻿using MongoDB.Bson;
+﻿using System.Diagnostics.CodeAnalysis;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System.Diagnostics.CodeAnalysis;
+using MongoDbAccess;
+using MongoDbAccess.Models;
 
 namespace LocalLangLibrary.Models
 {
-    public class Category
-    {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        [NotNull]
-        public string? Id { get; set; }
-        public string Name { get; set; }
-        public string? Description { get; set; }
+	[CachedCollection(1440)]
+	public class Category : IModel
+	{
+		[BsonId]
+		[BsonRepresentation(BsonType.ObjectId)]
+		[NotNull]
+		public string? Id { get; set; }
+		public string Name { get; set; }
+		public string? Description { get; set; }
 
 		public Category(string name)
 		{
 			Name = name;
 		}
 
-        public Category(string name, string description)
-        {
-            Name = name;
+		public Category(string name, string description)
+		{
+			Name = name;
 			Description = description;
 		}
-    }
+	}
 }

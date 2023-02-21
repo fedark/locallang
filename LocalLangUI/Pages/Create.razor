@@ -13,7 +13,7 @@
         </div>
         @if (categories_ is not null)
         {
-            <EditForm Model="newExpression_" OnValidSubmit="CreateExpression">
+            <EditForm Model="newExpression_" OnValidSubmit="CreateExpressionAsync">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
                 <div class="input-section">

@@ -121,7 +121,7 @@
     <value>Категория не определена</value>
   </data>
   <data name="CategoryRequiredError" xml:space="preserve">
-    <value>Ты далбаеб? Сказано же, выберите категорию, блять</value>
+    <value>Укажите категорию</value>
   </data>
   <data name="ExpressionInvalidError" xml:space="preserve">
     <value>Слишком длинное выражение</value>
@@ -130,7 +130,7 @@
     <value>Укажите выражение</value>
   </data>
   <data name="PageNotFoundError" xml:space="preserve">
-    <value>Рукожоп, блять, нет такой страницы!</value>
+    <value>Чтоб жизнь медом не казалась, такой страницы нету!</value>
   </data>
   <data name="TranslationInvalidError" xml:space="preserve">
     <value>Слишком длинный перевод</value>

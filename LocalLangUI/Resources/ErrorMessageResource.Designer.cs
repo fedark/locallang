@@ -70,7 +70,7 @@ namespace LocalLangUI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ты далбаеб? Сказано же, выберите категорию, блять.
+        ///   Looks up a localized string similar to Укажите категорию.
         /// </summary>
         public static string CategoryRequiredError {
             get {
@@ -97,7 +97,7 @@ namespace LocalLangUI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Рукожоп, блять, нет такой страницы!.
+        ///   Looks up a localized string similar to Чтоб жизнь медом не казалась, такой страницы нету!.
         /// </summary>
         public static string PageNotFoundError {
             get {

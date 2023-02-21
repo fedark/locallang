@@ -11,7 +11,7 @@
 }
 else
 {
-    <button class="btn btn-primary" @onclick="CreateCategories">Create Categories</button>
+    <button class="btn btn-primary" @onclick="CreateCategoriesAsync">Create Categories</button>
 }
 
 @if (expressionsCreated_)
@@ -20,14 +20,14 @@ else
 }
 else
 {
-    <button class="btn btn-danger" @onclick="GenerateSampleData">Generate Sample Data</button>
+    <button class="btn btn-danger" @onclick="GenerateSampleDataAsync">Generate Sample Data</button>
 }
 
 @code {
     private bool categoriesCreated_ = false;
     private bool expressionsCreated_ = false;
 
-    private async Task CreateCategories()
+    private async Task CreateCategoriesAsync()
     {
         var categories = await dbCategories.GetAllAsync();
         if (categories?.Count > 0)
@@ -48,17 +48,17 @@ else
         foreach (var name in categorySample)
         {
             var category = new Category(name);
-            await dbCategories.Create(category);
+            await dbCategories.CreateAsync(category);
         }
 
         categoriesCreated_ = true;
     }
 
-    private async Task GenerateSampleData()
+    private async Task GenerateSampleDataAsync()
     {
         if (!categoriesCreated_)
         {
-            await CreateCategories();
+            await CreateCategoriesAsync();
         }
 
         var categories = await dbCategories.GetAllAsync();
@@ -162,7 +162,7 @@ else
             var category = categories!.Where(c => c.Name == categoryName).Single();
             var expression = new Expression(word, transaltion, category);
             expression.Status = Status.Approved;
-            await dbExpressions.Create(expression);
+            await dbExpressions.CreateAsync(expression);
         }
     }
 }
